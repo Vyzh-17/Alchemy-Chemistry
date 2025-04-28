@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Thermodynamics Quiz Hangman</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Cinzel', serif;
+      background: linear-gradient(to bottom, #013220, #000000);  /* dark green to black */
+      color: #f1e4b8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #container {
+      background: #0e1a0e; /* deep greenish-black */
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 40px;
+      padding: 60px;
+      width: 100%;
+      border: 4px solid #d4af37; /* gold border */
+    }
+
+    #shock-effect {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border: 3px solid red;
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .animate-shock {
+      animation: shockwave 0.6s ease-out forwards;
+    }
+
+    @keyframes shockwave {
+      0% {
+        transform: scale(0.2);
+        opacity: 0.9;
+        border-width: 3px;
+      }
+      50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+        border-width: 4px;
+      }
+      100% {
+        transform: scale(2);
+        opacity: 0;
+        border-width: 1px;
+      }
+    }
+
+    #hangman-section {
+      width: 100px;
+      text-align: center;
+    }
+
+    #gallows {
+      margin: 0 auto;
+    }
+
+    #hangman div {
+      font-size: 28px;
+      line-height: 30px;
+    }
+
+    #quiz-section {
+      flex: 1;
+      max-width: 750px;
+    }
+
+    h1 {
+      color: #d4af37; /* gold */
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    #question {
+      font-size: 20px;
+      margin-bottom: 25px;
+      color: #f1e4b8;
+    }
+
+    .option {
+      display: block;
+      margin: 12px 0;
+      padding: 12px 20px;
+      background: #1a1a1a; /* dark greenish */
+      border: 2px solid #d4af37; /* gold */
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: background 0.3s, transform 0.2s;
+      font-size: 16px;
+      color: #f1e4b8;
+    }
+
+    .option:hover {
+      background: #2e3d2d; /* lighter green */
+      transform: scale(1.01);
+    }
+
+    .option:disabled {
+      background: #e0e0e0;
+      color: #888;
+      cursor: default;
+    }
+
+    #status, #gameOver {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #status {
+      color: white; /* green for correct */
+    }
+
+    #gameOver {
+      color: #8B0000; /* red for game over */
+    }
+
+    #score {
+      font-size: 18px;
+      color: #f1e4b8;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #d4af37; /* gold */
+      border: 2px solid #d4af37;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      color: white;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: #c79c2e; /* darker gold */
+      transform: scale(1.05);
+    }
+  
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="hangman-section">
+      <h2 id="hangman-title">Hangman</h2>
+      <div id="gallows">
+        <div id="shock-effect"></div>
+        <div id="pole">🪵</div>
+        <div id="hangman">
+          <div id="head">😵</div>
+          <div id="body">|</div>
+          <div id="arm-left">/</div>
+          <div id="arm-right">\\</div>
+          <div id="leg-left">/</div>
+          <div id="leg-right">\\</div>
+        </div>
+      </div>
+    </div>
+    <div id="quiz-section">
+      <h1>🔬  Electrochemistry</h1>
+      <div id="score">Score: 0</div>
+      <div id="question"></div>
+      <div id="options"></div>
+      <div id="status"></div>
+      <div id="gameOver"></div>
+      <button onclick="location.href='mech.html'">Exit</button>
+    </div>
+  </div>
+
+  <script>
+const questions = [
+  {
+    question: "You are tasked with selecting a battery for a **high-performance electric vehicle** (EV) that needs to provide **high energy density** and support **fast charging**. Which battery chemistry would be the most suitable?",
+    options: ["A) Lithium-Ion (Li-ion)", "B) Lead-Acid", "C) Nickel-Cadmium (NiCd)", "D) Sodium-Ion"],
+    answer: "A) Lithium-Ion (Li-ion)",
+    explanation: "Lithium-Ion (Li-ion) batteries provide the highest **energy density** and **fast charging** capabilities, making them ideal for modern **electric vehicles**. They are lighter and more efficient compared to lead-acid or nickel-cadmium batteries."
+  },
+  {
+    question: "You are working with a **solar power storage system** that needs a **longer lifespan** and moderate energy density. Which battery type would you choose for the application?",
+    options: ["A) Lead-Acid", "B) Lithium-Ion", "C) Nickel-Metal Hydride (NiMH)", "D) Zinc-Air"],
+    answer: "A) Lead-Acid",
+    explanation: "Lead-Acid batteries, while not having the highest energy density, are well-known for their **long lifespan** and reliability, making them an affordable choice for **solar power storage systems**."
+  },
+  {
+    question: "You are designing a **portable electronic device** and need a **rechargeable battery** with **low cost**, **good discharge efficiency**, and **a stable voltage output**. Which battery would you recommend?",
+    options: ["A) Lithium-Ion (Li-ion)", "B) Nickel-Cadmium (NiCd)", "C) Lead-Acid", "D) Nickel-Metal Hydride (NiMH)"],
+    answer: "D) Nickel-Metal Hydride (NiMH)",
+    explanation: "Nickel-Metal Hydride (NiMH) batteries are a **good balance** between **cost**, **discharge efficiency**, and **voltage stability**, making them ideal for **portable electronic devices** like cameras or radios."
+  },
+  {
+    question: "In an industrial electrolysis process, you are asked to calculate the mass of copper deposited at the cathode when a current of 2 A is passed for 10 minutes. According to **Faraday's law of electrolysis**, what factor is most important in determining the amount of copper deposited?",
+    options: ["A) The current", "B) The voltage applied", "C) The time the current flows", "D) The temperature of the solution"],
+    answer: "A) The current",
+    explanation: "According to **Faraday's law**, the amount of substance deposited during electrolysis is directly proportional to the **current** and the **time** the current flows. The voltage affects the process but is not the primary factor."
+  },
+  {
+    question: "You are working with a **hydrogen fuel cell** in a **vehicle**. What is the most significant product generated in the fuel cell after the reaction of hydrogen with oxygen?",
+    options: ["A) Water", "B) Carbon Dioxide", "C) Methane", "D) Nitrogen Oxides"],
+    answer: "A) Water",
+    explanation: "A **hydrogen fuel cell** generates **water** as its primary product when hydrogen reacts with oxygen. This makes fuel cells an environmentally friendly option for clean energy generation in vehicles."
+  },
+  {
+    question: "During electrolysis of water, what happens at the **anode**?",
+    options: ["A) Oxygen gas is produced", "B) Hydrogen gas is produced", "C) Water is consumed", "D) Sodium hydroxide is formed"],
+    answer: "A) Oxygen gas is produced",
+    explanation: "During the electrolysis of water, **oxygen gas** is produced at the **anode** and **hydrogen gas** at the cathode. This process splits water molecules into hydrogen and oxygen."
+  },
+  {
+    question: "You are studying the **corrosion of iron** in a **marine environment**. What is the primary factor contributing to the acceleration of corrosion in this case?",
+    options: ["A) High temperature", "B) Presence of water and oxygen", "C) Low temperature", "D) High pH of the environment"],
+    answer: "B) Presence of water and oxygen",
+    explanation: "Corrosion of iron is accelerated in **marine environments** because of the high **concentration of water and oxygen**. Saltwater acts as an electrolyte, allowing the electrochemical corrosion process to occur more rapidly."
+  },
+  {
+    question: "You are tasked with protecting a **steel structure** from corrosion. Which method would be the most effective for long-term protection?",
+    options: ["A) Galvanizing (coating with zinc)", "B) Applying a plastic coating", "C) Using stainless steel", "D) Regular cleaning and oiling"],
+    answer: "A) Galvanizing (coating with zinc)",
+    explanation: "**Galvanizing** involves coating steel with a layer of zinc, which provides **sacrificial protection**. Zinc corrodes first, preventing the underlying steel from rusting. This method is highly effective for long-term protection."
+  },
+  {
+    question: "You are working with a **lead-acid battery** in an emergency backup system. What is the primary disadvantage of using this type of battery for the application?",
+    options: ["A) Low energy density", "B) High cost", "C) Toxicity of lead", "D) Short lifespan"],
+    answer: "C) Toxicity of lead",
+    explanation: "One of the primary disadvantages of **lead-acid batteries** is the **toxicity of lead**, which poses environmental and health risks during disposal or leakage, making them less ideal for certain applications despite their affordability."
+  },
+  {
+    question: "You are conducting a **corrosion prevention experiment** and apply a **sacrificial anode** to protect a pipeline. Which material would be most suitable for the sacrificial anode?",
+    options: ["A) Zinc", "B) Copper", "C) Aluminum", "D) Iron"],
+    answer: "A) Zinc",
+    explanation: "A **sacrificial anode** is made of a material more **electrochemically reactive** than the material being protected. Zinc is commonly used for sacrificial anodes because it corrodes in place of the protected material, preventing the pipeline from corroding."
+  },
+  {
+    question: "You are designing a **fuel cell** for use in a **remote research station**. What is the main advantage of using a fuel cell over traditional batteries in this application?",
+    options: ["A) Fuel cells can be recharged easily", "B) Fuel cells produce less heat", "C) Fuel cells provide a continuous power supply as long as fuel is available", "D) Fuel cells are cheaper to operate"],
+    answer: "C) Fuel cells provide a continuous power supply as long as fuel is available",
+    explanation: "**Fuel cells** provide **continuous power** as long as fuel (hydrogen or methanol) is supplied. Unlike batteries, which eventually run out of charge, fuel cells offer a long-term energy source, making them ideal for remote, off-grid applications."
+  }
+];
+
+
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const statusEl = document.getElementById("status");
+    const scoreEl = document.getElementById("score");
+    const gameOverEl = document.getElementById("gameOver");
+    const gallows = document.getElementById("gallows");
+    const hangmanTitle = document.getElementById("hangman-title");
+
+    let currentQuestion = 0;
+    let score = 0;
+    let wrongAttempts = 0;
+
+    const hangmanParts = ["head", "body", "arm-left", "arm-right", "leg-left", "leg-right"];
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      questionEl.textContent = `Q${currentQuestion + 1}. ${q.question}`;
+      optionsEl.innerHTML = "";
+      statusEl.textContent = "";
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(option, q.answer);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected, correct) {
+      disableOptions();
+      if (selected === correct) {
+        statusEl.textContent = "✅ Correct!";
+        score += 5;
+        scoreEl.textContent = `Score: ${score}`;
+      } else {
+        statusEl.textContent = `❌ Incorrect! The correct answer is: "${correct}"`;
+        hideHangmanPart(wrongAttempts);
+        wrongAttempts++;
+        if (wrongAttempts >= hangmanParts.length) {
+          endGame();
+          return;
+        }
+      }
+
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion >= questions.length) {
+          endGame();
+        } else {
+          loadQuestion();
+        }
+      }, 2000); // delay before next question (2s)
+    }
+
+    function disableOptions() {
+      document.querySelectorAll(".option").forEach(btn => {
+        btn.disabled = true;
+      });
+    }
+
+   function hideHangmanPart(index) {
+  const part = document.getElementById(hangmanParts[index]);
+  if (part) part.style.visibility = "hidden";
+  showShockEffect(); // Trigger shock animation
+}
+function showShockEffect() {
+  const shock = document.getElementById("shock-effect");
+  const gallows = document.getElementById("gallows");
+  const rect = gallows.getBoundingClientRect();
+
+  // Position shock effect near the center of the gallows
+  shock.style.left = `${rect.left + gallows.offsetWidth / 2 - 20}px`;
+  shock.style.top = `${rect.top + gallows.offsetHeight / 3}px`;
+
+  shock.classList.remove("animate-shock");
+  void shock.offsetWidth; // force reflow to restart animation
+  shock.classList.add("animate-shock");
+}
+
+
+    function hideEntireGallows() {
+      gallows.style.display = "none";
+      hangmanTitle.style.display = "none";
+    }
+
+    function endGame() {
+      questionEl.textContent = "";
+      optionsEl.innerHTML = "";
+      statusEl.textContent = "";
+      gameOverEl.innerHTML = `<h2>🎯 Final Score: ${score} / ${questions.length * 5}</h2>`;
+      hideEntireGallows();
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>

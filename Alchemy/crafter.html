@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <title>Molar Mass Challenge</title>
+  <style>
+      body {
+      font-family: 'Cinzel', serif;
+     background: linear-gradient(to bottom, #8B0000, #000000);
+
+      margin: 0;
+      padding: 0;
+      color: #f8e4c2;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .screen {
+      display: none;
+      padding: 40px;
+      background-color: #2c0d0d;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+      width: 700px;
+      border: 4px solid #b88a44;
+    }
+
+  .visible {
+      display: block;
+    }
+
+    h1, h2 {
+      color: #f8e4c2;
+      font-family: 'Cinzel', serif;
+      font-size: 38px;
+      letter-spacing: 2px;
+    }
+#beakerPopup {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  text-align: center;
+  z-index: 1000;
+  animation: popIn 0.5s ease;
+ background-color: #2c0d0d;
+  padding: 20px;
+    padding: 65px 65px 60px 65px;
+border: 4px solid #555;
+
+}
+
+@keyframes popIn {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.beaker {
+  width: 100px;
+  height: 140px;
+  background: transparent;
+  border: 4px solid #b88a44;
+  border-radius: 10px 10px 0 0;
+  position: relative;
+  margin: 20px auto;
+  overflow: hidden;
+  background-color: #2c0d0d;
+}
+
+.liquid {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 70%;
+  background-color: lightblue;
+  animation: rise 1s ease-in-out;
+  opacity: 0.8;
+  border-radius: 0 0 10px 10px;
+}
+
+@keyframes rise {
+  0% { height: 0; }
+  100% { height: 70%; }
+}
+
+.bubble {
+  position: absolute;
+  bottom: 10px;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: bubbleUp 2s infinite ease-in;
+}
+
+@keyframes bubbleUp {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  100% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+}
+
+#craftedMessage {
+  font-size: 20px;
+  margin-top: 10px;
+  color: #2c3e50;
+padding-bottom:20px;
+ color: #f8e4c2;
+  font-family: 'Cinzel', serif;
+}
+
+    .button {
+      background-color: #8B0000;
+      color: #f8e4c2;
+      border: 2px solid #b88a44;
+      padding: 12px 25px;
+      font-size: 18px;
+      border-radius: 8px;
+      margin: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 220px;
+     font-family: 'Cinzel', serif;
+    }
+
+    .button:hover {
+      background-color: #b23a3a;
+    }
+
+    .button:active {
+      background-color: #721818;
+    }
+  
+
+ 
+.element {
+      padding: 10px 16px;
+      margin: 5px;
+      border-radius: 6px;
+      background-color: #b88a44;
+      color: #2c0d0d;
+      font-size: 16px;
+     font-family: 'Cinzel', serif;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+  .element:hover {
+      background-color: #d4aa5e;
+    }
+
+    #feedback {
+      font-weight: bold;
+      font-size: 20px;
+      margin-top: 10px;
+      color: #fcd8a9;
+    }
+  
+
+    #timer, #currentMass, #selection {
+      font-size: 18px;
+      color: #ffe8c5;
+    }
+
+    .heart {
+      font-size: 24px;
+      color: red;
+    }
+
+    #hearts {
+      margin-top: 10px;
+      font-size: 24px;
+    }
+
+    .footer {
+      font-size: 14px;
+      margin-top: 20px;
+      color: #b88a44;
+
+
+    }
+
+    .footer1 {
+      font-size: 14px;
+      margin-bottom: 30px;
+       color: #b88a44;
+      transition: color 0.3s;
+    }
+
+    .footer1:hover {
+        color: #f4c76b;
+    }
+h2{
+font-size:14px;
+}
+ 
+#if{
+background-color: red;
+}
+  </style>
+</head>
+<body>
+
+  <!-- Start Screen -->
+  <div id="startScreen" class="screen visible">
+    <h1> Molar Crafter </h1>
+<div class="footer1">"Master the Elements, Build the Molecules!"</div>
+    <button class="button" onclick="startGame()">Start</button>
+<button class="button"  onclick="goBack()">Back</button>
+
+  </div>
+
+  <!-- Game Screen -->
+  <div id="gameScreen" class="screen">
+
+    <p id="hearts"></p>
+<p id="timer"></p>
+    <h2 id="compoundName"></h2>
+
+    <p id="molarTarget"></p>
+    <p id="hint"></p>
+    <div id="elementList"></div>
+    <p id="selection">Selected:</p>
+    <p id="currentMass" style="display:none"></p>
+    <div id="feedback"></div>
+    <div>
+      <button class="button" onclick="checkAnswer()">Check</button>
+      <button class="button" onclick="clearSelection()">Clear</button>
+      <button class="button" id="if" onclick="exitGame()">Exit</button>
+    </div>
+    
+  </div>
+<div id="beakerPopup">
+  <div class="beaker">
+    <div class="liquid" id="liquidFill"></div>
+    <div class="bubble" style="left: 20px; animation-delay: 0s;"></div>
+    <div class="bubble" style="left: 50px; animation-delay: 0.3s;"></div>
+    <div class="bubble" style="left: 70px; animation-delay: 0.6s;"></div>
+  </div>
+  <div id="craftedMessage">You have crafted Water!</div>
+</div>
+
+  <!-- Game Over Screen -->
+  <div id="gameOverScreen" class="screen">
+    <h1>🎮 Game Over!</h1>
+    <button class="button" onclick="startGame()">Try Again</button>
+  </div>
+
+  <script>
+    const questions = [
+      { name: "Water",c:"In a lab setting, you observe a colorless, odorless liquid that is a universal solvent, has a high boiling point, and forms a solid that is less dense than its liquid form. ", formula: "H2O", mass: 18.02 },
+      { name: "Ammonia",c:"While working in a manufacturing plant, you encounter a colorless, pungent gas that is highly soluble in water, has a basic pH in solution, and is commonly used in fertilizers.", formula: "NH3", mass: 17.03 },
+      { name: "Carbon Dioxide",c:"During a field study, you come across a colorless, odorless gas that increases the acidity of water, is produced by respiration, and can be captured and stored for industrial use. ", formula: "CO2", mass: 44.01 },
+      { name: "Methane", c:"While conducting a geological survey, you encounter a colorless, odorless gas that is highly flammable, produced by natural processes like decomposition, and is a major component of natural gas.", formula: "CH4", mass: 16.04 },
+      { name: "Sulfur Dioxide",c:"During an industrial process, you detect a colorless gas with a sharp, pungent odor that is commonly produced from the combustion of fossil fuels and is a known contributor to acid rain.", formula: "SO2", mass: 64.07 },
+      { name: "Nitric Acid",c:"In a laboratory, you come across a colorless liquid that is highly corrosive, has a strong, suffocating odor, and is used in the production of fertilizers and explosives.", formula: "HNO3", mass: 63.01 },
+      { name: "Hydrochloric Acid",c:"While working in a chemical plant, you encounter a colorless, pungent gas that dissolves readily in water to form a strong acid.", formula: "HCl", mass: 36.46 },
+      { name: "Glucose", c: " In a food processing plant, a clear, sweet-tasting, water-soluble substance is used to provide energy to cells. It is often found in fruits and is a key component in the production of energy drinks.",formula: "C6H12O6", mass: 180.16 },
+      { name: "Ozone",c:"In a high-altitude weather station, you observe a pale blue gas that forms a protective layer in the atmosphere, absorbing harmful ultraviolet radiation from the sun. ", formula: "O3", mass: 48.00 },
+      { name: "Hydrogen Peroxide",c:"In a medical setting, you observe a colorless liquid that effervesces when it comes into contact with broken skin, releasing oxygen. It is commonly used as a disinfectant and bleaching agent.", formula: "H2O2", mass: 34.02 }
+    ];
+
+    const elementData = {
+      H: { mass: 1.01, name: "Hydrogen" },
+      O: { mass: 16.00, name: "Oxygen" },
+      C: { mass: 12.01, name: "Carbon" },
+      N: { mass: 14.01, name: "Nitrogen" },
+      S: { mass: 32.07, name: "Sulfur" },
+      Cl: { mass: 35.45, name: "Chlorine" }
+    };
+
+    let currentQuestionIndex = 0;
+    let selected = [];
+    let health = 5;
+    let timer;
+    let timeLeft = 30;
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('visible'));
+      document.getElementById(id).classList.add('visible');
+    }
+
+    function startGame() {
+      showScreen('gameScreen');
+      currentQuestionIndex = 0;
+      health = 5;
+      selected = [];
+      loadQuestion();
+      updateHealth();
+      updateFeedback('');
+    }
+
+    function exitGame() {
+      clearInterval(timer);
+      showScreen('startScreen');
+    }
+   function goBack() {
+      window.location.href = 'student.html'; // Redirect to atomicmass.html
+    }
+
+    function loadQuestion() {
+      selected = [];
+      timeLeft = 30;
+      clearInterval(timer);
+      startTimer();
+
+      const q = questions[currentQuestionIndex];
+      document.getElementById('compoundName').innerText = `Compound: ${q.c}`;
+      document.getElementById('molarTarget').innerText = `Target Molar Mass: ${q.mass}`;
+     
+      updateSelection();
+      updateFeedback('');
+      renderElements();
+    }
+
+    function getHintFromFormula(formula) {
+      return formula.match(/[A-Z][a-z]?/g).map(el => elementData[el]?.name || '').join(', ');
+    }
+
+    function renderElements() {
+      const elementList = document.getElementById('elementList');
+      elementList.innerHTML = '';
+      Object.keys(elementData).forEach(el => {
+        const btn = document.createElement('button');
+        btn.innerText = el;
+        btn.className = 'element';
+        btn.onclick = () => {
+          selected.push(el);
+          updateSelection();
+        };
+        elementList.appendChild(btn);
+      });
+    }
+
+    function updateSelection() {
+      document.getElementById('selection').innerText = 'Selected: ' + selected.join(', ');
+      const totalMass = selected.reduce((sum, el) => sum + elementData[el].mass, 0);
+      document.getElementById('currentMass').innerText = `Current Mass: ${totalMass.toFixed(2)}`;
+    }
+
+    function updateFeedback(msg, correct = false) {
+      const fb = document.getElementById('feedback');
+      fb.innerText = msg;
+      fb.style.color = correct ? 'green' : 'red';
+    }
+
+    function updateHealth() {
+      document.getElementById('hearts').innerHTML = '❤️'.repeat(health);
+    }
+
+function checkAnswer() {
+  const totalMass = selected.reduce((sum, el) => sum + elementData[el].mass, 0);
+  const target = questions[currentQuestionIndex].mass;
+
+  if (Math.abs(totalMass - target) < 0.2) {
+    updateFeedback("✅ Correct!", true);
+    showBeaker(questions[currentQuestionIndex].name, currentQuestionIndex);
+    setTimeout(() => {
+      hideBeaker();
+      nextQuestion();
+    }, 2500);
+  } else {
+    health--;
+    updateHealth();
+    updateFeedback("❌ Wrong! Try again.");
+    if (health <= 0) {
+      setTimeout(() => {
+        showScreen('gameOverScreen');
+      }, 1000);
+    }
+  }
+}
+
+
+    function clearSelection() {
+      selected = [];
+      updateSelection();
+      updateFeedback('');
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex >= questions.length) {
+        showScreen('gameOverScreen');
+      } else {
+        loadQuestion();
+      }
+    }
+
+    function startTimer() {
+      document.getElementById('timer').innerText = `Time: ${timeLeft}`;
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').innerText = `Time: ${timeLeft}`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          health--;
+          updateHealth();
+          updateFeedback("⏰ Time's up!");
+          if (health <= 0) {
+            setTimeout(() => showScreen('gameOverScreen'), 1000);
+          } else {
+            setTimeout(() => nextQuestion(), 1000);
+          }
+        }
+      }, 1000);
+    }
+function showBeaker(name, index) {
+  const beaker = document.getElementById('beakerPopup');
+  const liquid = document.getElementById('liquidFill');
+  const message = document.getElementById('craftedMessage');
+
+  const colors = [
+    '#4fc3f7', '#a3e635', '#f87171', '#facc15',
+    '#38bdf8', '#c084fc', '#f472b6', '#fdba74',
+    '#60a5fa', '#fcd34d'
+  ];
+
+  liquid.style.backgroundColor = colors[index % colors.length];
+  message.innerText = `You have crafted ${name}!`;
+
+  beaker.style.display = 'block';
+}
+
+function hideBeaker() {
+  document.getElementById('beakerPopup').style.display = 'none';
+}
+
+  </script>
+
+</body>
+</html>
+
+
+
+
+
+
+

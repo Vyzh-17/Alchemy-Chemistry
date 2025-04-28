@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>cse-Environmental</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cinzel', serif;
+      background: linear-gradient(to bottom, #013220, #000000);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #f8e4c2;
+    }
+
+    .container {
+      position: relative;
+      background-color: #0e1a0e;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      width: 90%;
+      max-width: 900px;
+      border: 4px solid #b88a44;
+    }
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: 0.5rem;
+      color: #f8e4c2;
+    }
+
+    p {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      margin: 0.3rem 0;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      margin: 0.5rem;
+      border: 2px solid #b88a44;
+      border-radius: 12px;
+     background-color: #123322;
+      color: #f8e4c2;
+      font-size: 1rem;
+      font-family: 'Cinzel', serif;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+     background-color: #1e4d33;
+    }
+
+    
+
+    .option-btn {
+      display: block;
+      width: 100%;
+      margin: 0.3rem 0;
+       background-color: #123322;
+      color: #f8e4c2;
+      border: 1px solid #b88a44;
+    }
+
+    .option-btn:hover {
+      background-color: #1e4d33;
+    }
+
+    #feedback {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #f8e4c2;
+    }
+
+    #explanation {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      color: #ddb97e;
+    }
+
+    .bubble {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: floatBubble 3s ease-out forwards;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    @keyframes floatBubble {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(-50%, -200%) scale(1.4);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Nanotechnology</h2>
+    <p id="score">Score: 0</p>
+    <p id="lives">Lives: ❤️❤️❤️</p>
+    <p id="timer">Timer: 15</p>
+<br>
+    <p id="question">Click "Start" to begin!</p><br>
+    <div id="options"></div>
+    <p id="feedback"></p>
+    <p id="explanation"></p>
+    <button id="startBtn">Start</button>
+    <button onclick="location.href='eee.html'">Exit</button>
+  </div>
+
+  <script>
+const questions = [
+  {
+    question: "You are working on a **high-speed communication system** and need to select a material that offers **high electrical conductivity** and **low resistance** for the transmission lines. Which nanomaterial would you choose?",
+    options: ["A) Graphene", "B) Copper", "C) Silicon", "D) Gold"],
+    answer: "A) Graphene",
+    explanation: "Graphene offers **exceptional electrical conductivity** and **low resistance**, making it ideal for high-speed communication systems. While copper and gold are good conductors, graphene outperforms them at the nanoscale."
+  },
+  {
+    question: "In the development of **nanoelectronics**, which material is most likely to replace traditional silicon for **faster and more efficient transistors**?",
+    options: ["A) Graphene", "B) Carbon Nanotubes (CNTs)", "C) Gold", "D) Aluminum"],
+    answer: "B) Carbon Nanotubes (CNTs)",
+    explanation: "Carbon nanotubes (CNTs) have **unique electronic properties** and can carry much higher currents than silicon, making them promising for next-generation **nanoelectronics** with faster and more efficient transistors."
+  },
+  {
+    question: "You are tasked with designing a **nanoelectronic device** for ultra-fast signal processing. Which of the following materials would provide the best performance due to its **high carrier mobility**?",
+    options: ["A) Graphene", "B) Silicon", "C) Copper", "D) Diamond"],
+    answer: "A) Graphene",
+    explanation: "Graphene has **exceptionally high carrier mobility**, which allows for ultra-fast signal processing in nanoelectronic devices. Silicon, while widely used, does not offer the same level of performance."
+  },
+  {
+    question: "You are working on a project to **enhance communication speeds** in **optical networks** using nanomaterials. Which material would be the best choice for **integrating into optical communication systems**?",
+    options: ["A) Graphene", "B) Gallium Arsenide", "C) Carbon Nanotubes (CNTs)", "D) Silicon"],
+    answer: "C) Carbon Nanotubes (CNTs)",
+    explanation: "Carbon nanotubes (CNTs) can be integrated into **optical communication systems** to enhance **data transmission speeds** due to their **unique optical and electrical properties**. Graphene also has potential but is more commonly used for other applications."
+  },
+  {
+    question: "In the design of **high-speed integrated circuits** (ICs), which nanomaterial can help **minimize energy loss** and **improve power efficiency** due to its unique electrical characteristics?",
+    options: ["A) Graphene", "B) Carbon Nanotubes (CNTs)", "C) Silicon", "D) Copper"],
+    answer: "B) Carbon Nanotubes (CNTs)",
+    explanation: "Carbon nanotubes (CNTs) offer **low energy loss** and **high power efficiency** in high-speed ICs due to their unique electrical properties and scalability, making them ideal for advanced nanoelectronic applications."
+  },
+  {
+    question: "You are working on a **communication satellite** that requires lightweight and efficient materials. Which nanomaterial would provide **superior conductivity** and **strength** for the satellite's communication system?",
+    options: ["A) Graphene", "B) Aluminum", "C) Copper", "D) Silver"],
+    answer: "A) Graphene",
+    explanation: "Graphene offers **high electrical conductivity** and **strength** while being extremely lightweight, making it ideal for advanced aerospace applications such as **communication satellites**."
+  },
+  {
+    question: "Which of the following properties of **graphene** makes it an ideal candidate for future **high-performance computing devices**?",
+    options: ["A) High thermal conductivity", "B) Low thermal conductivity", "C) High electron density", "D) High electrical resistance"],
+    answer: "A) High thermal conductivity",
+    explanation: "Graphene's **high thermal conductivity** allows it to dissipate heat efficiently, making it suitable for high-performance computing devices where heat management is crucial."
+  },
+  {
+    question: "You are designing a **nanoelectronic sensor** for a highly sensitive **communication system**. Which material would offer the best combination of **flexibility** and **electrical properties** for this application?",
+    options: ["A) Graphene", "B) Copper", "C) Silicon", "D) Carbon Nanotubes (CNTs)"],
+    answer: "A) Graphene",
+    explanation: "Graphene is highly **flexible** and offers excellent **electrical properties**, making it ideal for nanoelectronic sensors used in sensitive communication systems. CNTs also have excellent electrical properties but are less flexible."
+  },
+  {
+    question: "You are tasked with developing a **next-generation communication device** with **improved speed and reduced latency**. Which nanomaterial would you choose to enhance the **speed of data transmission**?",
+    options: ["A) Graphene", "B) Silicon", "C) Copper", "D) Carbon Nanotubes (CNTs)"],
+    answer: "A) Graphene",
+    explanation: "Graphene is known for its **high electron mobility**, which leads to **faster data transmission**. This makes it an excellent choice for next-generation communication devices focused on speed and low latency."
+  },
+  {
+    question: "In the field of **nanoelectronics**, which property of **carbon nanotubes** makes them particularly useful for creating **nano-sized transistors**?",
+    options: ["A) High surface area", "B) High mechanical strength", "C) High thermal conductivity", "D) High carrier mobility"],
+    answer: "D) High carrier mobility",
+    explanation: "Carbon nanotubes (CNTs) exhibit **high carrier mobility**, which allows for the creation of **nano-sized transistors** with faster switching speeds, making them ideal for **nanoelectronics**."
+  }
+];
+
+
+
+    let currentQuestion = 0;
+    let score = 0;
+    let lives = 3;
+    let timeLeft = 15;
+    let questionTimer;
+
+    const scoreEl = document.getElementById("score");
+    const livesEl = document.getElementById("lives");
+    const timerEl = document.getElementById("timer");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const explanationEl = document.getElementById("explanation");
+    const startBtn = document.getElementById("startBtn");
+
+    function startGame() {
+      currentQuestion = 0;
+      score = 0;
+      lives = 3;
+      startBtn.textContent = "Restart";
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestion >= questions.length || lives <= 0) {
+        endGame();
+        return;
+      }
+
+      const q = questions[currentQuestion];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.classList.add("option-btn");
+        btn.onclick = () => checkAnswer(opt);
+        optionsEl.appendChild(btn);
+      });
+
+      scoreEl.textContent = `Score: ${score}`;
+      livesEl.textContent = `Lives: ${"❤️".repeat(lives)}`;
+      timeLeft = 15;
+      timerEl.textContent = `Timer: ${timeLeft}`;
+      clearInterval(questionTimer);
+      questionTimer = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      timeLeft--;
+      timerEl.textContent = `Timer: ${timeLeft}`;
+      if (timeLeft <= 0) {
+        clearInterval(questionTimer);
+        feedbackEl.textContent = "⏰ Time's up!";
+        explanationEl.textContent = questions[currentQuestion].explanation;
+        lives--;
+        currentQuestion++;
+        setTimeout(showQuestion, 2500);
+      }
+    }
+
+    function checkAnswer(selected) {
+      clearInterval(questionTimer);
+      const q = questions[currentQuestion];
+      if (selected === q.answer) {
+        feedbackEl.textContent = "✅ Correct!";
+        score++;
+       
+      } else {
+        feedbackEl.textContent = "❌ Incorrect!";
+        lives--;
+        
+      }
+      explanationEl.textContent = q.explanation;
+      currentQuestion++;
+      setTimeout(showQuestion, 2500);
+    }
+
+    function createBubbles(color, count = 12) {
+      const container = document.querySelector(".container");
+
+      for (let i = 0; i < count; i++) {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.style.backgroundColor = color;
+
+        const spreadX = Math.random() * 300 - 150;
+        const spreadY = Math.random() * 200 - 100;
+
+        bubble.style.left = `calc(50% + ${spreadX}px)`;
+        bubble.style.top = `calc(50% + ${spreadY}px)`;
+
+        container.appendChild(bubble);
+
+        setTimeout(() => {
+          bubble.remove();
+        }, 3000);
+      }
+    }
+
+    function endGame() {
+      clearInterval(questionTimer);
+      questionEl.textContent = "🎮 Game Over";
+      optionsEl.innerHTML = "";
+      timerEl.textContent = "";
+      livesEl.textContent = "";
+      scoreEl.textContent = `Final Score: ${score}`;
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+    }
+
+    startBtn.addEventListener("click", startGame);
+  </script>
+</body>
+</html>

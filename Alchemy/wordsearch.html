@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chemistry Word Search - Red Dead Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Cinzel', serif;
+      background: url('https://www.transparenttextures.com/patterns/black-linen.png') #1c1c1c;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: gold;
+    }
+
+    .container {
+      background: #2a2a2a;
+      padding: 30px;
+      border-radius: 15px;
+      border: 3px solid gold;
+      box-shadow: 0 10px 30px rgba(218, 165, 32, 0.7);
+      width: 90%;
+      max-width: 1200px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5em;
+      color: gold;
+    }
+
+    #controls button {
+      padding: 12px 24px;
+      margin: 5px;
+      font-size: 18px;
+      border: 2px solid gold;
+      background: #333;
+      color: gold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      font-family: 'Cinzel', serif;
+    }
+
+    #controls button:hover {
+      background: gold;
+      color: #222;
+    }
+
+    #game-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(15, 35px);
+      gap: 4px;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .cell {
+      width: 35px;
+      height: 35px;
+      background: #333;
+      border: 1px solid gold;
+      text-align: center;
+      line-height: 35px;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: gold;
+    }
+
+    .cell:hover {
+      background: #555;
+    }
+
+    .found {
+      background: gold !important;
+      color: #222;
+    }
+
+    #timer-container {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: gold;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: gold;
+    }
+
+    #clues-container {
+      width: 350px;
+      text-align: left;
+    }
+
+    #clues-container h2 {
+      color: gold;
+      border-bottom: 2px solid gold;
+      padding-bottom: 5px;
+    }
+
+    ol {
+      padding-left: 20px;
+      line-height: 1.8;
+      color: gold;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Chemistry Word Search - elements edition</h1>
+  <div id="controls">
+    <button id="startBtn">Start</button>
+    <button onclick="location.href='inter.html'">Back</button>
+  </div>
+
+  <div id="game-container" style="display: none;">
+    <div>
+      <div id="timer-container" style="display: none;">
+        <div id="timer">Time left: 5:00</div>
+      </div>
+      <div id="grid"></div>
+      <div id="message"></div>
+    </div>
+    <div id="clues-container" style="display: none;">
+      <h2>Clues</h2>
+      <ol id="clue-list"></ol>
+    </div>
+  </div>
+</div>
+
+<script>
+const gridSize = 15;
+const directions = [
+  { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 },
+  { x: -1, y: 0 }, { x: 0, y: -1 }, { x: -1, y: -1 },
+  { x: 1, y: -1 }, { x: -1, y: 1 }
+];
+const words = [
+  { word: "NITROGEN", clue: "Invisible architect of proteins, silent in every breath." },
+  { word: "PHOSPHORUS", clue: "Glows in the dark, fuels life's backbone." },
+  { word: "CHLORINE", clue: "Lurks in pools, fierce protector against unseen enemies." },
+  { word: "BORON", clue: "Hidden within armor and glass, a quiet ally." },
+  { word: "FLUORINE", clue: "Ferocious halogen, teeth's subtle guardian." },
+  { word: "IODINE", clue: "Essential moonlit trace for metabolic tides." },
+  { word: "OXYGEN", clue: "Burns, nourishes, yet unseen and everywhere." },
+  { word: "CARBON", clue: "Shapeshifter of diamonds and ashes alike." },
+  { word: "SILICON", clue: "Bridges stone and circuit, silent in Earth's crust." },
+  { word: "SULFUR", clue: "Whispers of volcanoes, yellow and vital." },
+  { word: "ALUMINUM", clue: "Pulled from clay, shields wagons and wings alike." },
+  { word: "ARGON", clue: "Noble gas, silent yet illuminating." },
+  { word: "NEON", clue: "Glows like a saloon sign in the dark." },
+  { word: "BISMUTH", clue: "Metallic rainbow, heavy yet delicate." },
+  { word: "SELENIUM", clue: "Moon's namesake, guardian of circuits and light." }
+];
+
+const grid = document.getElementById("grid");
+const clueList = document.getElementById("clue-list");
+const message = document.getElementById("message");
+const timerEl = document.getElementById("timer");
+const startBtn = document.getElementById("startBtn");
+const gameContainer = document.getElementById("game-container");
+const timerContainer = document.getElementById("timer-container");
+const cluesContainer = document.getElementById("clues-container");
+
+let puzzle, foundWords, selectedCells, timer;
+
+startBtn.addEventListener("click", () => {
+  gameContainer.style.display = "flex";
+  timerContainer.style.display = "block";
+  cluesContainer.style.display = "block";
+  startBtn.textContent = "Restart";
+  initializeGame();
+});
+
+function initializeGame() {
+  clearInterval(timer);
+  grid.innerHTML = "";
+  clueList.innerHTML = "";
+  message.textContent = "";
+  puzzle = Array(gridSize).fill().map(() => Array(gridSize).fill(""));
+  foundWords = new Set();
+  selectedCells = [];
+
+  placeWords();
+  fillGrid();
+  drawGrid();
+  drawClues();
+  startTimer(300);
+}
+
+function placeWords() {
+  words.forEach(entry => {
+    let placed = false;
+    while (!placed) {
+      const dir = directions[Math.floor(Math.random() * directions.length)];
+      const xStart = Math.floor(Math.random() * gridSize);
+      const yStart = Math.floor(Math.random() * gridSize);
+      let x = xStart;
+      let y = yStart;
+      let fits = true;
+
+      for (let i = 0; i < entry.word.length; i++) {
+        if (x < 0 || y < 0 || x >= gridSize || y >= gridSize || (puzzle[y][x] && puzzle[y][x] !== entry.word[i])) {
+          fits = false;
+          break;
+        }
+        x += dir.x;
+        y += dir.y;
+      }
+
+      if (fits) {
+        x = xStart;
+        y = yStart;
+        entry.positions = [];
+        for (let i = 0; i < entry.word.length; i++) {
+          puzzle[y][x] = entry.word[i];
+          entry.positions.push(`${y}-${x}`);
+          x += dir.x;
+          y += dir.y;
+        }
+        placed = true;
+      }
+    }
+  });
+}
+
+function fillGrid() {
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      if (!puzzle[y][x]) {
+        puzzle[y][x] = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+      }
+    }
+  }
+}
+
+function drawGrid() {
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.id = `${y}-${x}`;
+      cell.textContent = puzzle[y][x];
+      cell.addEventListener("click", () => selectCell(cell));
+      grid.appendChild(cell);
+    }
+  }
+}
+
+function drawClues() {
+  words.forEach(w => {
+    const li = document.createElement("li");
+    li.textContent = w.clue;
+    clueList.appendChild(li);
+  });
+}
+
+function selectCell(cell) {
+  if (cell.classList.contains("found")) return;
+  if (selectedCells.includes(cell)) {
+    cell.style.border = "1px solid gold";
+    selectedCells = selectedCells.filter(c => c !== cell);
+  } else {
+    cell.style.border = "2px solid white";
+    selectedCells.push(cell);
+  }
+  checkSelection();
+}
+
+function checkSelection() {
+  const selectedIDs = selectedCells.map(c => c.dataset.id);
+  for (let word of words) {
+    if (!foundWords.has(word.word) && selectedIDs.length === word.positions.length && selectedIDs.every(id => word.positions.includes(id))) {
+      selectedCells.forEach(cell => {
+        cell.classList.add("found");
+        cell.style.border = "1px solid gold";
+      });
+      foundWords.add(word.word);
+      selectedCells = [];
+      checkWin();
+      return;
+    }
+  }
+}
+
+function checkWin() {
+  if (foundWords.size === words.length) {
+    clearInterval(timer);
+    message.textContent = "🎉 Well Done, Partner! You found all the words!";
+  }
+}
+
+function startTimer(duration) {
+  let time = duration;
+  const updateTimer = () => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    timerEl.textContent = `Time left: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    if (--time < 0) {
+      clearInterval(timer);
+      message.textContent = "⏰ Time's up! Saddle up and try again!";
+      disableGrid();
+    }
+  };
+  updateTimer();
+  timer = setInterval(updateTimer, 1000);
+}
+
+function disableGrid() {
+  document.querySelectorAll('.cell').forEach(cell => {
+    const newCell = cell.cloneNode(true);
+    cell.parentNode.replaceChild(newCell, cell);
+  });
+}
+</script>
+</body>
+</html>

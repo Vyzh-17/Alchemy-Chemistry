@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <title>TicTacToe - Electronic Config</title>
+  <style>
+    body {
+      font-family: 'Cinzel', serif;
+      background: linear-gradient(to bottom, #8B0000, #000000);
+      margin: 0;
+      padding: 0;
+      color: #f8e4c2;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: #2c0d0d;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+      width: 400px;
+      text-align: center;
+      border: 4px solid #b88a44;
+    }
+
+    h1 {
+      color: #f8e4c2;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .cell {
+      width: 70px;
+      height: 70px;
+      background-color: #5c1a1a;
+      color: #f8e4c2;
+      font-size: 28px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+      border: 2px solid #b88a44;
+    }
+
+    .cell:hover {
+      background-color: #721818;
+    }
+
+    .question {
+      margin-top: 10px;
+    }
+
+    .options {
+      margin: 10px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .options button {
+      background-color: #8B0000;
+      color: #f8e4c2;
+      border: 2px solid #b88a44;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .options button:hover {
+      background-color: #b23a3a;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .turn {
+      margin: 10px 0;
+      font-size: 16px;
+      color: #f8e4c2;
+    }
+
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-around;
+
+    }
+
+    .buttons button {
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+border: 2px solid #b88a44;
+  
+    }
+
+    .start-btn, .restart-btn {
+      background-color: #8B0000;
+      color: #f8e4c2;
+      border: 2px solid #b88a44;
+ font-family: 'Cinzel', serif;
+    }
+
+    .start-btn:hover, .restart-btn:hover {
+      background-color: #b23a3a;
+    }
+
+    .exit-btn {
+      background-color: #8B0000;
+      color: white;
+ font-family: 'Cinzel', serif;
+    }
+
+    .exit-btn:hover {
+      background-color: #b23a3a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TicTacToe - Inorganic Chemistry</h1>
+    <div class="turn" id="turnInfo">Click Start to Begin</div>
+    <div class="board" id="board"></div>
+
+    <div class="question" id="questionBox" style="display:none;">
+      <div id="questionText"></div>
+      <div class="options" id="optionsBox"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="buttons">
+      <button class="start-btn" id="startBtn" onclick="startGame()">Start</button>
+      <button class="restart-btn" id="restartBtn" onclick="startGame()" style="display:none;">Restart</button>
+      <button class="exit-btn" onclick="window.location.href='inter.html'">Exit</button>
+    </div>
+  </div>
+
+  <script>
+    const boardEl = document.getElementById("board");
+    const questionBox = document.getElementById("questionBox");
+    const questionText = document.getElementById("questionText");
+    const optionsBox = document.getElementById("optionsBox");
+    const feedback = document.getElementById("feedback");
+    const turnInfo = document.getElementById("turnInfo");
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    let board = Array(9).fill("");
+    let currentPlayer = "X";
+    let currentCellIndex = null;
+
+const questions = [
+  {
+    q: "You are cleaning a rusty iron gate and decide to use a solution of hydrochloric acid. What type of reaction is occurring when the acid reacts with iron oxide (rust)?",
+    options: ["Redox reaction", "Precipitation reaction", "Neutralization reaction", "Decomposition reaction"],
+    correct: "Redox reaction"
+  },
+  {
+    q: "In an experiment, a student mixes potassium dichromate with sulfuric acid to oxidize an organic compound. Which ion acts as the oxidizing agent in this reaction?",
+    options: ["Cr3+", "Cr2O7^2-", "SO4^2-", "H+"],
+    correct: "Cr2O7^2-"
+  },
+  {
+    q: "A piece of sodium metal is dropped into water. The reaction is vigorous and produces hydrogen gas. What type of bond is present in sodium metal, and what type of bond is formed in sodium hydroxide after the reaction?",
+    options: ["Metallic bond; ionic bond", "Ionic bond; covalent bond", "Covalent bond; ionic bond", "Covalent bond; metallic bond"],
+    correct: "Metallic bond; ionic bond"
+  },
+  {
+    q: "In a laboratory experiment, a student prepares a solution of copper sulfate and adds zinc metal to it. What happens in this reaction?",
+    options: ["Zinc is reduced, and copper is oxidized", "Copper is reduced, and zinc is oxidized", "Both copper and zinc are reduced", "Both copper and zinc are oxidized"],
+    correct: "Copper is reduced, and zinc is oxidized"
+  },
+  {
+    q: "A chemist wants to determine the solubility of lead chloride (PbCl2) in water. Which type of chemical equilibrium will they need to consider?",
+    options: ["Solubility product equilibrium", "Le Chatelier's principle", "Acid-base equilibrium", "Redox equilibrium"],
+    correct: "Solubility product equilibrium"
+  },
+  {
+    q: "You’re given a sample of potassium permanganate (KMnO4) and need to use it as a disinfectant. How does potassium permanganate work as an oxidizing agent in this context?",
+    options: ["It reacts with pathogens, reducing them", "It releases oxygen to kill pathogens", "It oxidizes organic matter, killing bacteria", "It neutralizes acids in the environment"],
+    correct: "It oxidizes organic matter, killing bacteria"
+  },
+  {
+    q: "During a lab experiment, you observe the formation of a yellow precipitate when lead(II) nitrate is mixed with potassium iodide. What type of reaction has occurred?",
+    options: ["Redox reaction", "Double displacement reaction", "Neutralization reaction", "Decomposition reaction"],
+    correct: "Double displacement reaction"
+  },
+  {
+    q: "You are preparing a buffer solution using a weak acid and its conjugate base. What will happen to the pH of the solution if you add a small amount of strong acid?",
+    options: ["The pH will increase", "The pH will decrease", "The pH will remain the same", "The pH will fluctuate wildly"],
+    correct: "The pH will decrease"
+  },
+  {
+    q: "In an industrial process, chlorine gas (Cl2) is used to purify water. What type of reaction occurs when chlorine is used for water disinfection?",
+    options: ["Redox reaction", "Precipitation reaction", "Neutralization reaction", "Complexation reaction"],
+    correct: "Redox reaction"
+  },
+  {
+    q: "You are conducting a qualitative analysis experiment to detect the presence of sulfate ions (SO4^2-) in a solution. What reagent would you use to test for the presence of sulfate ions?",
+    options: ["Barium chloride (BaCl2)", "Silver nitrate (AgNO3)", "Ammonium hydroxide (NH4OH)", "Sodium hydroxide (NaOH)"],
+    correct: "Barium chloride (BaCl2)"
+  },
+  {
+    q: "You are studying the reactivity series of metals and notice that magnesium reacts with hydrochloric acid to produce hydrogen gas. What type of reaction is this?",
+    options: ["Redox reaction", "Acid-base reaction", "Double displacement reaction", "Precipitation reaction"],
+    correct: "Redox reaction"
+  },
+  {
+    q: "In the process of extracting metals from their ores, you use carbon monoxide to reduce iron ore (Fe2O3) to iron. What type of reaction is occurring in this reduction process?",
+    options: ["Redox reaction", "Combination reaction", "Decomposition reaction", "Displacement reaction"],
+    correct: "Redox reaction"
+  },
+  {
+    q: "You are working with a sample of chromium(III) oxide (Cr2O3) and heating it in the presence of a reducing agent. What will happen to the oxidation state of chromium in this reaction?",
+    options: ["It will increase", "It will decrease", "It will remain the same", "It will fluctuate between +2 and +3"],
+    correct: "It will decrease"
+  },
+  {
+    q: "A metal carbonate is heated and decomposes to produce metal oxide and carbon dioxide. This is an example of what kind of reaction?",
+    options: ["Redox reaction", "Decomposition reaction", "Displacement reaction", "Combination reaction"],
+    correct: "Decomposition reaction"
+  },
+  {
+    q: "In an experiment, you observe that a metal is displacing another metal from its salt solution. Which principle explains this phenomenon?",
+    options: ["Le Chatelier’s Principle", "Electrochemical series", "Hess’s Law", "Raoult’s Law"],
+    correct: "Electrochemical series"
+  },
+  {
+    q: "You are studying the solubility of silver chloride (AgCl) in water. The addition of chloride ions causes a decrease in its solubility. What principle explains this observation?",
+    options: ["Le Chatelier’s Principle", "Raoult’s Law", "Boyle’s Law", "Arrhenius Theory"],
+    correct: "Le Chatelier’s Principle"
+  }
+];
+
+
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function startGame() {
+      board = Array(9).fill("");
+      currentPlayer = "X";
+      currentCellIndex = null;
+      updateTurnInfo();
+      renderBoard();
+      feedback.innerText = "";
+      questionBox.style.display = "none";
+      startBtn.style.display = "none";
+      restartBtn.style.display = "inline-block";
+    }
+
+    function updateTurnInfo() {
+      turnInfo.innerText = `Player ${currentPlayer}'s Turn`;
+    }
+
+    function renderBoard() {
+      boardEl.innerHTML = "";
+      board.forEach((val, i) => {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.innerText = val;
+        cell.addEventListener("click", () => {
+          if (board[i] === "" && currentCellIndex === null) {
+            currentCellIndex = i;
+            showQuestion();
+          }
+        });
+        boardEl.appendChild(cell);
+      });
+    }
+
+    function showQuestion() {
+      const question = shuffle(questions)[0];
+      const shuffledOptions = shuffle([...question.options]);
+
+      questionBox.style.display = "block";
+      questionText.innerText = question.q;
+      optionsBox.innerHTML = "";
+      feedback.innerText = "";
+
+      shuffledOptions.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.addEventListener("click", () => {
+          if (opt === question.correct) {
+            feedback.innerText = "✅ Correct!";
+            board[currentCellIndex] = currentPlayer;
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            updateTurnInfo();
+            renderBoard();
+            checkWinner();
+          } else {
+            feedback.innerText = "❌ Incorrect!";
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            updateTurnInfo();
+          }
+
+          currentCellIndex = null;
+          setTimeout(() => {
+            feedback.innerText = "";
+            questionBox.style.display = "none";
+          }, 1000);
+        });
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function checkWinner() {
+      const winPatterns = [
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
+      ];
+
+      for (let pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (board[a] && board[a] === board[b] && board[b] === board[c]) {
+          turnInfo.innerText = `🎉 Player ${board[a]} Wins!`;
+          questionBox.style.display = "none";
+          currentCellIndex = null;
+          return;
+        }
+      }
+
+      if (board.every(cell => cell !== "")) {
+        turnInfo.innerText = `It's a Draw!`;
+        questionBox.style.display = "none";
+        currentCellIndex = null;
+      }
+    }
+  </script>
+</body>
+</html>

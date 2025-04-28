@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>cse-Environmental</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cinzel', serif;
+      background: linear-gradient(to bottom, #013220, #000000);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #f8e4c2;
+    }
+
+    .container {
+      position: relative;
+      background-color: #0e1a0e;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      width: 90%;
+      max-width: 900px;
+      border: 4px solid #b88a44;
+    }
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: 0.5rem;
+      color: #f8e4c2;
+    }
+
+    p {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      margin: 0.3rem 0;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      margin: 0.5rem;
+      border: 2px solid #b88a44;
+      border-radius: 12px;
+     background-color: #123322;
+      color: #f8e4c2;
+      font-size: 1rem;
+      font-family: 'Cinzel', serif;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+     background-color: #1e4d33;
+    }
+
+    
+
+    .option-btn {
+      display: block;
+      width: 100%;
+      margin: 0.3rem 0;
+       background-color: #123322;
+      color: #f8e4c2;
+      border: 1px solid #b88a44;
+    }
+
+    .option-btn:hover {
+      background-color: #1e4d33;
+    }
+
+    #feedback {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #f8e4c2;
+    }
+
+    #explanation {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      color: #ddb97e;
+    }
+
+    .bubble {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: floatBubble 3s ease-out forwards;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    @keyframes floatBubble {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(-50%, -200%) scale(1.4);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Polymers and Insulating Materials</h2>
+    <p id="score">Score: 0</p>
+    <p id="lives">Lives: ❤️❤️❤️</p>
+    <p id="timer">Timer: 15</p>
+<br>
+    <p id="question">Click "Start" to begin!</p><br>
+    <div id="options"></div>
+    <p id="feedback"></p>
+    <p id="explanation"></p>
+    <button id="startBtn">Start</button>
+    <button onclick="location.href='eee.html'">Exit</button>
+  </div>
+
+  <script>
+const questions = [
+  {
+    question: "You are designing an **insulated wire** for a high-temperature industrial application. Which insulating material would be most suitable for providing electrical insulation while withstanding high temperatures?",
+    options: ["A) PVC", "B) Teflon", "C) Bakelite", "D) Rubber"],
+    answer: "B) Teflon",
+    explanation: "Teflon has excellent **thermal stability** and high electrical resistance, making it ideal for use in high-temperature environments. PVC and rubber are not as heat-resistant, and Bakelite is more suited for electrical components than wires."
+  },
+  {
+    question: "You are working on a **high-voltage transmission line** and need to select an insulating material that provides high dielectric strength. Which material would you recommend?",
+    options: ["A) PVC", "B) Teflon", "C) Bakelite", "D) Rubber"],
+    answer: "B) Teflon",
+    explanation: "Teflon provides a **high dielectric strength** and **excellent insulating properties**, making it the best choice for high-voltage applications. PVC and rubber are less suitable for high-voltage insulation."
+  },
+  {
+    question: "In the design of a **printed circuit board (PCB)**, which insulating material is commonly used to prevent electrical shorts between conductive traces?",
+    options: ["A) Teflon", "B) Bakelite", "C) FR4", "D) PVC"],
+    answer: "C) FR4",
+    explanation: "FR4 is the standard **insulating material** used in PCBs due to its **high electrical insulation properties** and mechanical strength. Teflon is used in specialized applications, while Bakelite is more common in electrical components."
+  },
+  {
+    question: "You are designing a **cable** for a power system where the insulating material needs to be resistant to chemical exposure and extreme temperatures. Which polymer would be the best choice for this application?",
+    options: ["A) PVC", "B) Teflon", "C) Rubber", "D) Bakelite"],
+    answer: "B) Teflon",
+    explanation: "Teflon offers **excellent chemical resistance** and can withstand **extreme temperatures**, making it ideal for industrial cable insulation. PVC and rubber are less chemically resistant, and Bakelite is used in other applications like electrical components."
+  },
+  {
+    question: "Which property is most important when selecting an insulating material for an **electrical transformer**?",
+    options: ["A) High thermal conductivity", "B) High dielectric strength", "C) Low resistance", "D) High electrical conductivity"],
+    answer: "B) High dielectric strength",
+    explanation: "For transformers, the insulating material must have a **high dielectric strength** to prevent electrical breakdown and ensure safe operation under high voltages."
+  },
+  {
+    question: "You are designing a **battery** for use in a **portable device** and need to select an insulating material for the casing. Which material would provide the best protection against electrical short circuits?",
+    options: ["A) PVC", "B) Bakelite", "C) Teflon", "D) Rubber"],
+    answer: "B) Bakelite",
+    explanation: "Bakelite is a **highly durable** insulating material that provides excellent protection against electrical short circuits, especially in devices where mechanical strength is important. PVC and rubber are less durable in such applications."
+  },
+  {
+    question: "Which of the following polymers is most commonly used for **high-frequency electrical applications** due to its low dielectric loss and high stability?",
+    options: ["A) PVC", "B) Teflon", "C) Bakelite", "D) Rubber"],
+    answer: "B) Teflon",
+    explanation: "Teflon is widely used in **high-frequency electrical applications** due to its **low dielectric loss** and **high thermal stability**, making it ideal for electronics and communication systems."
+  },
+  {
+    question: "In the design of **microelectronic devices**, which polymer material would you use to create insulating layers between different conducting parts?",
+    options: ["A) PVC", "B) Teflon", "C) Bakelite", "D) Polyimide"],
+    answer: "D) Polyimide",
+    explanation: "Polyimide is commonly used in microelectronics due to its **high electrical insulation properties**, **thermal stability**, and **flexibility**, making it ideal for insulating layers in devices like semiconductors."
+  },
+  {
+    question: "You are designing a **power cable** for a construction site, where the cable will be exposed to heavy wear and tear. Which material would you choose to provide **durability and electrical insulation**?",
+    options: ["A) PVC", "B) Rubber", "C) Teflon", "D) Bakelite"],
+    answer: "A) PVC",
+    explanation: "PVC is widely used for **durable and flexible electrical insulation**, making it ideal for power cables that will endure mechanical wear and environmental exposure while maintaining electrical insulation."
+  },
+  {
+    question: "Which of the following polymers would be most suitable for use in the **insulating coatings** of **high-voltage power lines**?",
+    options: ["A) PVC", "B) Bakelite", "C) Teflon", "D) Rubber"],
+    answer: "C) Teflon",
+    explanation: "Teflon is highly resistant to **electrical breakdown** and provides **excellent insulation** for high-voltage power lines. It also has **outstanding chemical and thermal stability**, making it ideal for harsh outdoor conditions."
+  }
+];
+
+
+    let currentQuestion = 0;
+    let score = 0;
+    let lives = 3;
+    let timeLeft = 15;
+    let questionTimer;
+
+    const scoreEl = document.getElementById("score");
+    const livesEl = document.getElementById("lives");
+    const timerEl = document.getElementById("timer");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const explanationEl = document.getElementById("explanation");
+    const startBtn = document.getElementById("startBtn");
+
+    function startGame() {
+      currentQuestion = 0;
+      score = 0;
+      lives = 3;
+      startBtn.textContent = "Restart";
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestion >= questions.length || lives <= 0) {
+        endGame();
+        return;
+      }
+
+      const q = questions[currentQuestion];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.classList.add("option-btn");
+        btn.onclick = () => checkAnswer(opt);
+        optionsEl.appendChild(btn);
+      });
+
+      scoreEl.textContent = `Score: ${score}`;
+      livesEl.textContent = `Lives: ${"❤️".repeat(lives)}`;
+      timeLeft = 15;
+      timerEl.textContent = `Timer: ${timeLeft}`;
+      clearInterval(questionTimer);
+      questionTimer = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      timeLeft--;
+      timerEl.textContent = `Timer: ${timeLeft}`;
+      if (timeLeft <= 0) {
+        clearInterval(questionTimer);
+        feedbackEl.textContent = "⏰ Time's up!";
+        explanationEl.textContent = questions[currentQuestion].explanation;
+        lives--;
+        currentQuestion++;
+        setTimeout(showQuestion, 2500);
+      }
+    }
+
+    function checkAnswer(selected) {
+      clearInterval(questionTimer);
+      const q = questions[currentQuestion];
+      if (selected === q.answer) {
+        feedbackEl.textContent = "✅ Correct!";
+        score++;
+       
+      } else {
+        feedbackEl.textContent = "❌ Incorrect!";
+        lives--;
+        
+      }
+      explanationEl.textContent = q.explanation;
+      currentQuestion++;
+      setTimeout(showQuestion, 2500);
+    }
+
+    function createBubbles(color, count = 12) {
+      const container = document.querySelector(".container");
+
+      for (let i = 0; i < count; i++) {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.style.backgroundColor = color;
+
+        const spreadX = Math.random() * 300 - 150;
+        const spreadY = Math.random() * 200 - 100;
+
+        bubble.style.left = `calc(50% + ${spreadX}px)`;
+        bubble.style.top = `calc(50% + ${spreadY}px)`;
+
+        container.appendChild(bubble);
+
+        setTimeout(() => {
+          bubble.remove();
+        }, 3000);
+      }
+    }
+
+    function endGame() {
+      clearInterval(questionTimer);
+      questionEl.textContent = "🎮 Game Over";
+      optionsEl.innerHTML = "";
+      timerEl.textContent = "";
+      livesEl.textContent = "";
+      scoreEl.textContent = `Final Score: ${score}`;
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+    }
+
+    startBtn.addEventListener("click", startGame);
+  </script>
+</body>
+</html>

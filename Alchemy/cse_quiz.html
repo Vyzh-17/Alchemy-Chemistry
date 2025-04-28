@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>cse-Environmental</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cinzel', serif;
+      background: linear-gradient(to bottom, #013220, #000000);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #f8e4c2;
+    }
+
+    .container {
+      position: relative;
+      background-color: #0e1a0e;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      width: 90%;
+      max-width: 900px;
+      border: 4px solid #b88a44;
+    }
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: 0.5rem;
+      color: #f8e4c2;
+    }
+
+    p {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      margin: 0.3rem 0;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      margin: 0.5rem;
+      border: 2px solid #b88a44;
+      border-radius: 12px;
+     background-color: #123322;
+      color: #f8e4c2;
+      font-size: 1rem;
+      font-family: 'Cinzel', serif;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+     background-color: #1e4d33;
+    }
+
+    
+
+    .option-btn {
+      display: block;
+      width: 100%;
+      margin: 0.3rem 0;
+       background-color: #123322;
+      color: #f8e4c2;
+      border: 1px solid #b88a44;
+    }
+
+    .option-btn:hover {
+      background-color: #1e4d33;
+    }
+
+    #feedback {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #f8e4c2;
+    }
+
+    #explanation {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      color: #ddb97e;
+    }
+
+    .bubble {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: floatBubble 3s ease-out forwards;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    @keyframes floatBubble {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(-50%, -200%) scale(1.4);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Environmental Chemistry</h2>
+    <p id="score">Score: 0</p>
+    <p id="lives">Lives: ❤️❤️❤️</p>
+    <p id="timer">Timer: 15</p>
+<br>
+    <p id="question">Click "Start" to begin!</p><br>
+    <div id="options"></div>
+    <p id="feedback"></p>
+    <p id="explanation"></p>
+    <button id="startBtn">Start</button>
+    <button onclick="location.href='cse.html'">Exit</button>
+  </div>
+
+  <script>
+const questions = [
+  {
+    question: "A data center is trying to reduce its environmental footprint by switching to renewable energy. Which of the following energy sources is most sustainable for long-term use?",
+    options: ["Natural Gas", "Nuclear Power", "Solar Power", "Coal"],
+    answer: "Solar Power",
+    explanation: "Solar power is a renewable and sustainable energy source that does not produce harmful emissions and can be used long-term."
+  },
+  {
+    question: "You are tasked with reducing the carbon footprint of a cloud service provider's infrastructure. Which strategy would be most effective in reducing energy consumption?",
+    options: ["Using high-efficiency servers", "Increasing the number of backup generators", "Reducing the number of cloud users", "Installing cooling systems powered by fossil fuels"],
+    answer: "Using high-efficiency servers",
+    explanation: "High-efficiency servers consume less power, leading to reduced overall energy consumption and a smaller carbon footprint."
+  },
+  {
+    question: "A software company is looking to implement energy-efficient algorithms in their cloud computing services. Which type of algorithm would most likely help reduce energy usage?",
+    options: ["Sorting algorithms with lower time complexity", "Algorithms that require frequent data retrieval from hard drives", "Algorithms that perform extensive computations in parallel", "Algorithms that need large amounts of memory and CPU resources"],
+    answer: "Sorting algorithms with lower time complexity",
+    explanation: "Algorithms with lower time complexity (like O(log n) vs O(n)) can reduce the number of computations, leading to less energy consumption in data processing."
+  },
+  {
+    question: "An e-commerce platform wants to optimize its server usage to reduce electricity consumption during peak traffic times. Which strategy would be the most energy-efficient?",
+    options: ["Using more servers during peak hours", "Shutting down servers when not in use", "Overclocking CPUs to handle more requests", "Increasing storage capacity to handle more data"],
+    answer: "Shutting down servers when not in use",
+    explanation: "Shutting down unused servers during off-peak hours reduces energy consumption and lowers environmental impact."
+  },
+  {
+    question: "A company uses a cloud-based machine learning model for predictive analytics. How can they reduce the environmental impact of training and running the model?",
+    options: ["Use a larger dataset for better accuracy", "Switch to a more energy-efficient programming language", "Train the model during off-peak hours", "Use data centers powered by renewable energy"],
+    answer: "Use data centers powered by renewable energy",
+    explanation: "Data centers powered by renewable energy sources, like wind or solar, have a much lower environmental impact compared to those powered by fossil fuels."
+  },
+  {
+    question: "A mobile app development company is considering adopting a ‘green’ approach. What would be the most environmentally friendly way to reduce the app's carbon footprint?",
+    options: ["Optimize code to reduce app size and storage requirements", "Increase the frequency of app updates", "Host the app on a private data server", "Use a high-performance app design framework"],
+    answer: "Optimize code to reduce app size and storage requirements",
+    explanation: "Smaller app sizes and reduced storage requirements on devices lower the demand for data transmission and server resources, leading to less energy consumption."
+  },
+  {
+    question: "A tech company is working on improving the energy efficiency of their hardware systems. Which of the following material innovations would most likely reduce the environmental impact of their devices?",
+    options: ["Using silicon-based processors", "Using biodegradable plastics for components", "Switching to LED lighting for displays", "Incorporating more copper into circuit boards"],
+    answer: "Using biodegradable plastics for components",
+    explanation: "Biodegradable plastics for components reduce the environmental impact of device disposal and contribute to reducing e-waste."
+  },
+  {
+    question: "An AI company wants to reduce the carbon emissions caused by the data processing power required for deep learning. Which approach would be most effective?",
+    options: ["Reduce the number of data samples used in training", "Switch to a more energy-efficient hardware infrastructure", "Increase the training time to improve results", "Run the model on multiple servers simultaneously"],
+    answer: "Switch to a more energy-efficient hardware infrastructure",
+    explanation: "Energy-efficient hardware, such as GPUs designed for deep learning, can significantly reduce the amount of energy consumed during model training."
+  },
+  {
+    question: "A software company is considering migrating its legacy systems to the cloud. How can they ensure that the migration process will have minimal environmental impact?",
+    options: ["Choose a cloud provider that uses renewable energy", "Migrate all systems at once to reduce the migration time", "Use data centers with old, inefficient infrastructure", "Prioritize high-latency data transfers for better security"],
+    answer: "Choose a cloud provider that uses renewable energy",
+    explanation: "Cloud providers using renewable energy sources, such as wind and solar, minimize the environmental impact of cloud computing infrastructure."
+  },
+  {
+    question: "A startup wants to implement a sustainable strategy for their computer systems. Which of the following would contribute the most to reducing their electronic waste?",
+    options: ["Use the latest hardware for all devices", "Design systems to be modular and easily upgradeable", "Avoid regular maintenance to extend hardware life", "Use non-recyclable materials in devices"],
+    answer: "Design systems to be modular and easily upgradeable",
+    explanation: "Modular systems allow for easy upgrades of individual components, reducing the need to replace entire devices and minimizing electronic waste."
+  }
+];
+
+
+    let currentQuestion = 0;
+    let score = 0;
+    let lives = 3;
+    let timeLeft = 15;
+    let questionTimer;
+
+    const scoreEl = document.getElementById("score");
+    const livesEl = document.getElementById("lives");
+    const timerEl = document.getElementById("timer");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const explanationEl = document.getElementById("explanation");
+    const startBtn = document.getElementById("startBtn");
+
+    function startGame() {
+      currentQuestion = 0;
+      score = 0;
+      lives = 3;
+      startBtn.textContent = "Restart";
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestion >= questions.length || lives <= 0) {
+        endGame();
+        return;
+      }
+
+      const q = questions[currentQuestion];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.classList.add("option-btn");
+        btn.onclick = () => checkAnswer(opt);
+        optionsEl.appendChild(btn);
+      });
+
+      scoreEl.textContent = `Score: ${score}`;
+      livesEl.textContent = `Lives: ${"❤️".repeat(lives)}`;
+      timeLeft = 15;
+      timerEl.textContent = `Timer: ${timeLeft}`;
+      clearInterval(questionTimer);
+      questionTimer = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      timeLeft--;
+      timerEl.textContent = `Timer: ${timeLeft}`;
+      if (timeLeft <= 0) {
+        clearInterval(questionTimer);
+        feedbackEl.textContent = "⏰ Time's up!";
+        explanationEl.textContent = questions[currentQuestion].explanation;
+        lives--;
+        currentQuestion++;
+        setTimeout(showQuestion, 2500);
+      }
+    }
+
+    function checkAnswer(selected) {
+      clearInterval(questionTimer);
+      const q = questions[currentQuestion];
+      if (selected === q.answer) {
+        feedbackEl.textContent = "✅ Correct!";
+        score++;
+       
+      } else {
+        feedbackEl.textContent = "❌ Incorrect!";
+        lives--;
+        
+      }
+      explanationEl.textContent = q.explanation;
+      currentQuestion++;
+      setTimeout(showQuestion, 2500);
+    }
+
+    function createBubbles(color, count = 12) {
+      const container = document.querySelector(".container");
+
+      for (let i = 0; i < count; i++) {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.style.backgroundColor = color;
+
+        const spreadX = Math.random() * 300 - 150;
+        const spreadY = Math.random() * 200 - 100;
+
+        bubble.style.left = `calc(50% + ${spreadX}px)`;
+        bubble.style.top = `calc(50% + ${spreadY}px)`;
+
+        container.appendChild(bubble);
+
+        setTimeout(() => {
+          bubble.remove();
+        }, 3000);
+      }
+    }
+
+    function endGame() {
+      clearInterval(questionTimer);
+      questionEl.textContent = "🎮 Game Over";
+      optionsEl.innerHTML = "";
+      timerEl.textContent = "";
+      livesEl.textContent = "";
+      scoreEl.textContent = `Final Score: ${score}`;
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+    }
+
+    startBtn.addEventListener("click", startGame);
+  </script>
+</body>
+</html>

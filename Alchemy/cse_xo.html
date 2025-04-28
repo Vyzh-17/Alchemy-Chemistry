@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <title>TicTacToe - Electronic Config</title>
+  <style>
+    body {
+      font-family: 'Cinzel', serif;
+      background: linear-gradient(to bottom, #013220, #000000); /* dark green to black */
+      margin: 0;
+      padding: 0;
+      color: #f1e4b8;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: #0e1a0e; /* deep greenish-black */
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+      width: 400px;
+      text-align: center;
+      border: 4px solid #d4af37; /* gold */
+    }
+
+    h1 {
+      color: #f1e4b8;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .cell {
+      width: 70px;
+      height: 70px;
+      background-color: #123322; /* dark green */
+      color: #f1e4b8;
+      font-size: 28px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+      border: 2px solid #d4af37; /* gold */
+    }
+
+    .cell:hover {
+      background-color: #1e4d33; /* lighter green on hover */
+    }
+
+    .question {
+      margin-top: 10px;
+    }
+
+    .options {
+      margin: 10px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .options button {
+      background-color: #123322; /* dark green */
+      color: #f1e4b8;
+      border: 2px solid #d4af37; /* gold */
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      font-family: 'Cinzel', serif;
+    }
+
+    .options button:hover {
+      background-color: #1e4d33;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .turn {
+      margin: 10px 0;
+      font-size: 16px;
+      color: #f1e4b8;
+    }
+
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .buttons button {
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border: 2px solid #d4af37; /* gold */
+    }
+
+    .start-btn, .restart-btn {
+      background-color: #123322; /* dark green */
+      color: #f1e4b8;
+      border: 2px solid #d4af37; /* gold */
+      font-family: 'Cinzel', serif;
+    }
+
+    .start-btn:hover, .restart-btn:hover {
+      background-color: #1e4d33;
+    }
+
+    .exit-btn {
+      background-color: #123322; /* dark green */
+      color: white;
+      font-family: 'Cinzel', serif;
+    }
+
+    .exit-btn:hover {
+      background-color: #1e4d33;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TicTacToe - Material ScienceS</h1>
+    <div class="turn" id="turnInfo">Click Start to Begin</div>
+    <div class="board" id="board"></div>
+
+    <div class="question" id="questionBox" style="display:none;">
+      <div id="questionText"></div>
+      <div class="options" id="optionsBox"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="buttons">
+      <button class="start-btn" id="startBtn" onclick="startGame()">Start</button>
+      <button class="restart-btn" id="restartBtn" onclick="startGame()" style="display:none;">Restart</button>
+      <button class="exit-btn" onclick="window.location.href='cse.html'">Exit</button>
+    </div>
+  </div>
+
+  <script>
+    const boardEl = document.getElementById("board");
+    const questionBox = document.getElementById("questionBox");
+    const questionText = document.getElementById("questionText");
+    const optionsBox = document.getElementById("optionsBox");
+    const feedback = document.getElementById("feedback");
+    const turnInfo = document.getElementById("turnInfo");
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    let board = Array(9).fill("");
+    let currentPlayer = "X";
+    let currentCellIndex = null;
+
+const questions = [
+  {
+    q: "You are tasked with designing a **smartphone** with a long-lasting, scratch-resistant screen. The material you choose should balance **strength**, **flexibility**, and **optical clarity**. Which material would you recommend, and why?",
+    options: ["A) Glass (like Gorilla Glass)", "B) Plastic", "C) Ceramic", "D) Aluminum Alloy"],
+    correct: "A) Glass (like Gorilla Glass)",
+    explanation: "Glass offers a high balance of **scratch resistance** and **optical clarity**, which is why **Gorilla Glass** is widely used in smartphones. It is also flexible enough to avoid cracking under pressure. Plastic lacks durability, while ceramic, though scratch-resistant, could be too brittle."
+  },
+  {
+    q: "In designing a **lightweight yet durable wing structure** for an aircraft, you need a material that can **withstand high pressure** at **high altitudes** while minimizing weight. Which material would be the most suitable for this application?",
+    options: ["A) Aluminum Alloys", "B) Steel", "C) Carbon Fiber Composites", "D) Titanium Alloys"],
+    correct: "C) Carbon Fiber Composites",
+    explanation: "Carbon fiber composites are preferred in aerospace due to their **lightweight** and **high strength-to-weight ratio**. They also have excellent **resistance to high-pressure environments** and **corrosion**, making them ideal for aircraft wings."
+  },
+  {
+    q: "When developing a **solar panel** for a commercial building, the goal is to maximize **energy conversion efficiency** while also ensuring the panel can withstand **environmental stress** such as **temperature fluctuations**. Which material would be best for the solar cells?",
+    options: ["A) Silicon", "B) Copper", "C) Lead", "D) Zinc"],
+    correct: "A) Silicon",
+    explanation: "Silicon is the most commonly used material for solar cells because it has a **high energy conversion efficiency**, **durability** under temperature fluctuations, and is **non-toxic**. Copper and zinc aren't as efficient for energy conversion in solar cells."
+  },
+  {
+    q: "You need to design a **wear-resistant coating** for machinery that experiences high friction and **extreme temperatures**. The material should also be **cost-effective** and easy to apply. Which material would you choose?",
+    options: ["A) Tungsten Carbide", "B) Diamond Coating", "C) Aluminum Oxide", "D) Teflon"],
+    correct: "A) Tungsten Carbide",
+    explanation: "Tungsten carbide is known for its **exceptional hardness** and **wear resistance**, making it ideal for **high-friction environments**. Diamond coating is harder but is **expensive** and difficult to apply, while Teflon, though good for reducing friction, doesn't withstand high temperatures."
+  },
+  {
+    q: "You are asked to incorporate **smart materials** into a **building's design** to automatically adjust the room's temperature in response to external temperature changes. Which material would allow you to achieve this?",
+    options: ["A) Shape Memory Alloys", "B) Glass (Smart Glass)", "C) Polymers", "D) Conductive Metals"],
+    correct: "B) Glass (Smart Glass)",
+    explanation: "Smart glass changes its optical properties (transparency) based on temperature or voltage, allowing it to **adapt** to changes in the environment, reducing heat intake or loss. Shape memory alloys could also respond to temperature but wouldn't directly impact room temperature control."
+  },
+  {
+    q: "As part of the development of a **next-generation rechargeable battery** for electric vehicles, which material would you choose for the **anode** to improve **energy density** and **recharge time**?",
+    options: ["A) Lithium Cobalt Oxide", "B) Graphene", "C) Lead Acid", "D) Sodium"],
+    correct: "B) Graphene",
+    explanation: "Graphene has shown potential in improving **energy density** and **recharge time** due to its unique properties such as **high conductivity** and **high surface area**. Lithium cobalt oxide is used but doesn't have the same potential for rapid charging."
+  },
+  {
+    q: "For a **rocket nozzle** designed to withstand extremely high temperatures during re-entry, which material would provide the necessary thermal protection and durability?",
+    options: ["A) Ceramic Matrix Composites", "B) Steel", "C) Aluminum", "D) Graphite"],
+    correct: "A) Ceramic Matrix Composites",
+    explanation: "Ceramic Matrix Composites (CMCs) can withstand extremely high temperatures and are used in **aerospace applications** for **thermal protection systems** (e.g., rocket nozzles). Steel and aluminum would melt, while graphite has good thermal resistance but is brittle."
+  },
+  {
+    q: "For a **bone implant** that will be inserted into a patient's body, you need a material that has a **high biocompatibility**, **corrosion resistance**, and **similar strength to human bone**. Which material would be best for the implant?",
+    options: ["A) Titanium Alloys", "B) Stainless Steel", "C) Aluminum Alloys", "D) Gold"],
+    correct: "A) Titanium Alloys",
+    explanation: "Titanium alloys are known for their **biocompatibility** and **corrosion resistance**, making them ideal for **medical implants** like **bone replacements**. Titanium’s strength is also similar to human bone."
+  },
+  {
+    q: "In your new **electronic device** design, you need a material that has **high electrical conductivity** and **low thermal conductivity** to prevent heat buildup while allowing efficient signal transmission. Which material fits best?",
+    options: ["A) Copper", "B) Silicon", "C) Gold", "D) Graphene"],
+    correct: "D) Graphene",
+    explanation: "Graphene provides **superior electrical conductivity** while maintaining **low thermal conductivity**, making it ideal for **high-performance electronics** where efficient signal transmission and thermal management are crucial."
+  }
+];
+
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function startGame() {
+      board = Array(9).fill("");
+      currentPlayer = "X";
+      currentCellIndex = null;
+      updateTurnInfo();
+      renderBoard();
+      feedback.innerText = "";
+      questionBox.style.display = "none";
+      startBtn.style.display = "none";
+      restartBtn.style.display = "inline-block";
+    }
+
+    function updateTurnInfo() {
+      turnInfo.innerText = `Player ${currentPlayer}'s Turn`;
+    }
+
+    function renderBoard() {
+      boardEl.innerHTML = "";
+      board.forEach((val, i) => {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.innerText = val;
+        cell.addEventListener("click", () => {
+          if (board[i] === "" && currentCellIndex === null) {
+            currentCellIndex = i;
+            showQuestion();
+          }
+        });
+        boardEl.appendChild(cell);
+      });
+    }
+
+    function showQuestion() {
+      const question = shuffle(questions)[0];
+      const shuffledOptions = shuffle([...question.options]);
+
+      questionBox.style.display = "block";
+      questionText.innerText = question.q;
+      optionsBox.innerHTML = "";
+      feedback.innerText = "";
+
+      shuffledOptions.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.addEventListener("click", () => {
+          if (opt === question.correct) {
+            feedback.innerText = "✅ Correct!";
+            board[currentCellIndex] = currentPlayer;
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            updateTurnInfo();
+            renderBoard();
+            checkWinner();
+          } else {
+            feedback.innerText = "❌ Incorrect!";
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            updateTurnInfo();
+          }
+
+          currentCellIndex = null;
+          setTimeout(() => {
+            feedback.innerText = "";
+            questionBox.style.display = "none";
+          }, 1000);
+        });
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function checkWinner() {
+      const winPatterns = [
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
+      ];
+
+      for (let pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (board[a] && board[a] === board[b] && board[b] === board[c]) {
+          turnInfo.innerText = `🎉 Player ${board[a]} Wins!`;
+          questionBox.style.display = "none";
+          currentCellIndex = null;
+          return;
+        }
+      }
+
+      if (board.every(cell => cell !== "")) {
+        turnInfo.innerText = `It's a Draw!`;
+        questionBox.style.display = "none";
+        currentCellIndex = null;
+      }
+    }
+  </script>
+</body>
+</html>
