@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Solution Tetris Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #9face6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #333;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: 2.5em;
+      color: #222;
+    }
+
+    #game {
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    canvas {
+      background-color: #111;
+      border: 4px solid #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    #quiz {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      width: 260px;
+    }
+
+    #quiz p {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    #options button {
+      background: #74ebd5;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s;
+    }
+
+    #options button:hover {
+      background: #57cfc4;
+    }
+
+    #score {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    #controls {
+      margin: 20px 0;
+    }
+
+    .arrow-btn {
+      background: #9face6;
+      color: #fff;
+      border: none;
+      margin: 5px;
+      padding: 10px;
+      font-size: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .arrow-btn:hover {
+      background: #7c8fd2;
+    }
+
+    #arrow-grid {
+      display: grid;
+      grid-template-columns: 60px 60px 60px;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    #arrow-grid > button {
+      width: 60px;
+      height: 60px;
+    }
+
+    .explanation {
+      font-size: 0.9em;
+      color: #555;
+      margin-top: 10px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>💡 Solution Tetris</h1>
+  <div id="game">
+    <canvas id="tetris" width="240" height="400"></canvas>
+    <div id="quiz">
+      <p id="question">Question appears here</p>
+      <div id="options"></div>
+      <div class="explanation" id="explanation"></div>
+    </div>
+  </div>
+  <p>Score: <span id="score">0</span></p>
+  <div id="controls">
+    <div id="arrow-grid">
+      <div></div>
+      <button class="arrow-btn" onclick="moveBlock('rotate')">↻</button>
+      <div></div>
+      <button class="arrow-btn" onclick="moveBlock('right')">←</button>
+      <button class="arrow-btn" onclick="moveBlock('down')">↓</button>
+      <button class="arrow-btn" onclick="moveBlock('left')">→</button>
+    </div>
+  </div>
+
+  <audio id="clearSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
+
+  <script>
+    const canvas = document.getElementById('tetris');
+    const context = canvas.getContext('2d');
+    const scoreElem = document.getElementById('score');
+    const questionElem = document.getElementById('question');
+    const optionsElem = document.getElementById('options');
+    const explanationElem = document.getElementById('explanation');
+    const clearSound = document.getElementById('clearSound');
+
+    context.scale(20, 20);
+
+    let score = 0;
+    let questionAnswered = false;
+
+    const questions = [
+    { q: "What is a solution?", options: ["A type of mixture where substances are evenly distributed", "A mixture where particles are visible", "A compound only made of metals", "A solid dispersed in a solid"], correct: "A type of mixture where substances are evenly distributed", explanation: "Solutions are homogeneous mixtures where components are uniformly mixed." },
+    { q: "Which of these is a solute in saltwater?", options: ["Salt", "Water", "Air", "Oil"], correct: "Salt", explanation: "The solute is the substance dissolved in the solvent. In saltwater, salt is the solute." },
+    { q: "What is the solvent in sugar water?", options: ["Sugar", "Water", "Salt", "Alcohol"], correct: "Water", explanation: "The solvent is the component in greater amount; water dissolves sugar here." },
+    { q: "Which factor increases solubility of most solids in liquids?", options: ["Increasing temperature", "Decreasing temperature", "Decreasing pressure", "Freezing"], correct: "Increasing temperature", explanation: "Raising the temperature usually increases solubility of solids in liquids." },
+    { q: "A solution that holds the maximum amount of solute is called:", options: ["Saturated", "Dilute", "Unsaturated", "Supersaturated"], correct: "Saturated", explanation: "A saturated solution cannot dissolve more solute at the given conditions." },
+    { q: "What happens to a solute in a solvent?", options: ["It dissolves", "It melts", "It freezes", "It evaporates"], correct: "It dissolves", explanation: "Dissolving is the process of a solute mixing evenly with a solvent." },
+    { q: "What type of mixture is a solution?", options: ["Homogeneous", "Heterogeneous", "Colloid", "Suspension"], correct: "Homogeneous", explanation: "Solutions are homogeneous because their composition is uniform throughout." },
+    { q: "Which of these would most likely dissolve in water?", options: ["Sugar", "Sand", "Iron", "Plastic"], correct: "Sugar", explanation: "Sugar is a polar substance and dissolves easily in water, a polar solvent." },
+    { q: "What is the term for a solution that contains less solute than it can hold?", options: ["Unsaturated", "Saturated", "Supersaturated", "Dilute"], correct: "Unsaturated", explanation: "An unsaturated solution has not reached the maximum amount of solute it can dissolve." },
+    { q: "Which is a gaseous solution?", options: ["Air", "Saltwater", "Soda", "Milk"], correct: "Air", explanation: "Air is a gaseous solution of various gases like nitrogen, oxygen, etc." },
+    { q: "What happens to solubility of gases when temperature increases?", options: ["Decreases", "Increases", "Stays the same", "Becomes infinite"], correct: "Decreases", explanation: "Gases become less soluble in liquids as temperature increases." },
+    { q: "Which is NOT a characteristic of a solution?", options: ["Particles settle over time", "Homogeneous", "Small particles", "No Tyndall effect"], correct: "Particles settle over time", explanation: "Solutions do not settle and remain uniform." },
+    { q: "What does concentration refer to in solutions?", options: ["Amount of solute in a given amount of solvent", "The solvent only", "Only solid solutes", "Volume of container"], correct: "Amount of solute in a given amount of solvent", explanation: "Concentration measures how much solute is in a solution." },
+    { q: "Which one is an example of a liquid-liquid solution?", options: ["Alcohol in water", "Sugar in tea", "Oxygen in water", "Salt in water"], correct: "Alcohol in water", explanation: "Alcohol and water form a liquid-liquid solution." },
+    { q: "Which factor does NOT affect solubility?", options: ["Color of solute", "Temperature", "Pressure", "Nature of solute and solvent"], correct: "Color of solute", explanation: "Color is a physical trait, not a factor affecting solubility." },
+    { q: "What is a supersaturated solution?", options: ["A solution that contains more solute than it can normally hold", "A solution that contains only water", "A mixture that settles", "A dilute solution"], correct: "A solution that contains more solute than it can normally hold", explanation: "Supersaturated solutions are unstable and hold more solute than their saturation point under given conditions." },
+    { q: "Which of these is NOT a solution?", options: ["Saltwater", "Bronze", "Milk", "Air"], correct: "Milk", explanation: "Milk is a colloid, not a true solution." },
+    { q: "What kind of solution is soda water?", options: ["Gas in liquid", "Liquid in solid", "Solid in gas", "Liquid in gas"], correct: "Gas in liquid", explanation: "Soda water is a solution where carbon dioxide gas is dissolved in water." },
+    { q: "What is the Tyndall effect used to distinguish?", options: ["Colloids from solutions", "Elements from compounds", "Solvents from solutes", "Acids from bases"], correct: "Colloids from solutions", explanation: "Colloids scatter light (Tyndall effect), while true solutions do not." },
+    { q: "What does 'miscible' mean?", options: ["Two liquids that mix completely", "A solid that does not dissolve", "Gases that do not react", "Insoluble materials"], correct: "Two liquids that mix completely", explanation: "Miscible liquids dissolve in each other in all proportions." },
+    { q: "What is molarity?", options: ["Moles of solute per liter of solution", "Grams per liter", "Liters per mole", "Volume of solute per liter"], correct: "Moles of solute per liter of solution", explanation: "Molarity is a measure of concentration." },
+    { q: "Which of these is the best method to separate a solid solute from a liquid solvent?", options: ["Evaporation", "Filtration", "Chromatography", "Decantation"], correct: "Evaporation", explanation: "Evaporation removes the solvent, leaving the solute behind." },
+    { q: "Which of the following affects the rate of dissolving?", options: ["Temperature", "Stirring", "Surface area", "All of the above"], correct: "All of the above", explanation: "All three increase the rate at which solutes dissolve." },
+    { q: "Which concentration term depends on mass of solvent?", options: ["Molality", "Molarity", "Normality", "Volume percent"], correct: "Molality", explanation: "Molality is moles of solute per kg of solvent." },
+    { q: "A dilute solution has:", options: ["A small amount of solute", "A large amount of solvent", "A concentrated solute", "Solids only"], correct: "A small amount of solute", explanation: "A dilute solution contains very little solute compared to solvent." }
+   
+    ];
+
+    const matrixes = {
+      T: [[0,1,0],[1,1,1]],
+      O: [[2,2],[2,2]],
+      L: [[0,0,3],[3,3,3]],
+      J: [[4,0,0],[4,4,4]],
+      I: [[5,5,5,5]],
+      S: [[0,6,6],[6,6,0]],
+      Z: [[7,7,0],[0,7,7]],
+    };
+
+    const colors = [null, '#FF0D72', '#0DC2FF', '#0DFF72', '#F538FF', '#FF8E0D', '#FFE138', '#3877FF'];
+    const arena = createMatrix(12, 20);
+
+    const player = {
+      pos: {x: 5, y: 0},
+      matrix: createPiece(),
+    };
+
+    function createMatrix(w, h) {
+      const matrix = [];
+      while (h--) matrix.push(new Array(w).fill(0));
+      return matrix;
+    }
+
+    function drawMatrix(matrix, offset) {
+      matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+          if (value) {
+            context.fillStyle = colors[value];
+            context.fillRect(x + offset.x, y + offset.y, 1, 1);
+          }
+        });
+      });
+    }
+
+    function draw() {
+      context.fillStyle = '#000';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      drawMatrix(arena, {x: 0, y: 0});
+      drawMatrix(player.matrix, player.pos);
+    }
+
+    function merge(arena, player) {
+      player.matrix.forEach((row, y) => {
+        row.forEach((val, x) => {
+          if (val) {
+            arena[y + player.pos.y][x + player.pos.x] = val;
+          }
+        });
+      });
+    }
+
+    function collide(arena, player) {
+      const m = player.matrix;
+      const o = player.pos;
+      for (let y = 0; y < m.length; ++y) {
+        for (let x = 0; x < m[y].length; ++x) {
+          if (m[y][x] && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function createPiece() {
+      const types = "TJLOSZI";
+      const type = types[Math.floor(Math.random() * types.length)];
+      return matrixes[type];
+    }
+
+    function playerReset() {
+      player.matrix = createPiece();
+      player.pos.y = 0;
+      player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+      if (collide(arena, player)) {
+        arena.forEach(row => row.fill(0));
+        score = 0;
+        updateScore();
+      }
+    }
+
+    function playerDrop() {
+      player.pos.y++;
+      if (collide(arena, player)) {
+        player.pos.y--;
+        merge(arena, player);
+        arenaSweep();
+        updateScore();
+        playerReset();
+        askQuestion();
+        questionAnswered = false;
+      }
+    }
+
+    function arenaSweep() {
+      outer: for (let y = arena.length - 1; y >= 0; --y) {
+        for (let x = 0; x < arena[y].length; ++x) {
+          if (!arena[y][x]) continue outer;
+        }
+        arena.splice(y, 1);
+        arena.unshift(new Array(arena[0].length).fill(0));
+        score++;
+        clearSound.play();
+        y++;
+      }
+    }
+
+    function updateScore() {
+      scoreElem.innerText = score;
+    }
+
+    function update(time = 0) {
+      const deltaTime = time - lastTime;
+      lastTime = time;
+      dropCounter += deltaTime;
+
+      if (dropCounter > dropInterval && questionAnswered) {
+        playerDrop();
+        dropCounter = 0;
+      }
+
+      draw();
+      requestAnimationFrame(update);
+    }
+
+    function askQuestion() {
+      const q = questions[Math.floor(Math.random() * questions.length)];
+      questionElem.innerText = q.q;
+      explanationElem.innerText = "";
+      optionsElem.innerHTML = "";
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.onclick = () => {
+          if (option === q.correct) {
+            questionAnswered = true;
+            explanationElem.innerText = `✔ ${q.explanation}`;
+          } else {
+            alert("Try again!");
+          }
+        };
+        optionsElem.appendChild(btn);
+      });
+    }
+
+    function rotate(matrix) {
+      return matrix[0].map((_, i) => matrix.map(row => row[i])).reverse();
+    }
+
+    function moveBlock(action) {
+      if (!questionAnswered) return;
+      if (action === 'left') {
+        player.pos.x++; // reversed
+        if (collide(arena, player)) player.pos.x--;
+      } else if (action === 'right') {
+        player.pos.x--; // reversed
+        if (collide(arena, player)) player.pos.x++;
+      } else if (action === 'rotate') {
+        const pos = player.pos.x;
+        let offset = 1;
+        player.matrix = rotate(player.matrix);
+        while (collide(arena, player)) {
+          player.pos.x += offset;
+          offset = -(offset + (offset > 0 ? 1 : -1));
+          if (offset > player.matrix[0].length) {
+            player.matrix = rotate(player.matrix);
+            player.matrix = rotate(player.matrix);
+            player.matrix = rotate(player.matrix);
+            player.pos.x = pos;
+            return;
+          }
+        }
+      } else if (action === 'down') {
+        playerDrop();
+      }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (!questionAnswered) return;
+      if (e.key === "ArrowLeft") moveBlock('right'); // reversed
+      else if (e.key === "ArrowRight") moveBlock('left'); // reversed
+      else if (e.key === "ArrowUp") moveBlock('rotate');
+      else if (e.key === "ArrowDown") moveBlock('down');
+    });
+
+    let dropCounter = 0;
+    let dropInterval = 1000;
+    let lastTime = 0;
+
+    playerReset();
+    askQuestion();
+    update();
+  </script>
+</body>
+</html>

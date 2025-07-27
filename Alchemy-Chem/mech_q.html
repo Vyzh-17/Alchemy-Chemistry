@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>cse-Environmental</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cinzel', serif;
+      background: linear-gradient(to bottom, #013220, #000000);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #f8e4c2;
+    }
+
+    .container {
+      position: relative;
+      background-color: #0e1a0e;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      width: 90%;
+      max-width: 900px;
+      border: 4px solid #b88a44;
+    }
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: 0.5rem;
+      color: #f8e4c2;
+    }
+
+    p {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      margin: 0.3rem 0;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      margin: 0.5rem;
+      border: 2px solid #b88a44;
+      border-radius: 12px;
+     background-color: #123322;
+      color: #f8e4c2;
+      font-size: 1rem;
+      font-family: 'Cinzel', serif;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+     background-color: #1e4d33;
+    }
+
+    
+
+    .option-btn {
+      display: block;
+      width: 100%;
+      margin: 0.3rem 0;
+       background-color: #123322;
+      color: #f8e4c2;
+      border: 1px solid #b88a44;
+    }
+
+    .option-btn:hover {
+      background-color: #1e4d33;
+    }
+
+    #feedback {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #f8e4c2;
+    }
+
+    #explanation {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      color: #ddb97e;
+    }
+
+    .bubble {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      opacity: 0.1;
+      animation: floatBubble 3s ease-out forwards;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    @keyframes floatBubble {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(-50%, -200%) scale(1.4);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Surface Chemistry</h2>
+    <p id="score">Score: 0</p>
+    <p id="lives">Lives: ❤️❤️❤️</p>
+    <p id="timer">Timer: 15</p>
+<br>
+    <p id="question">Click "Start" to begin!</p><br>
+    <div id="options"></div>
+    <p id="feedback"></p>
+    <p id="explanation"></p>
+    <button id="startBtn">Start</button>
+    <button onclick="location.href='mech.html'">Exit</button>
+  </div>
+
+  <script>
+const questions = [
+  {
+    question: "In the design of an **engine** for a **high-performance vehicle**, which of the following properties of **lubricants** would help reduce **friction** and **wear** between moving parts?",
+    options: ["A) High viscosity", "B) Low surface tension", "C) High surface energy", "D) High thermal conductivity"],
+    answer: "A) High viscosity",
+    explanation: "A **high-viscosity lubricant** helps reduce **friction** and **wear** between moving parts by forming a thicker film that separates the surfaces, minimizing direct contact and wear."
+  },
+  {
+    question: "You are designing a **cutting tool** that operates at high speeds. To minimize **friction** and improve the tool’s **lifespan**, which type of **lubricant** would be most suitable?",
+    options: ["A) Water-based lubricants", "B) Oil-based lubricants", "C) Solid lubricants", "D) Air lubrication"],
+    answer: "C) Solid lubricants",
+    explanation: "Solid lubricants, such as **graphite** or **molybdenum disulfide**, are ideal for high-speed cutting tools as they can withstand high pressures and temperatures while minimizing **friction** and extending the tool’s lifespan."
+  },
+  {
+    question: "During a manufacturing process, you need to improve the **adhesion** of a **coating** on a metal surface. Which factor would be most important to increase the **adhesion**?",
+    options: ["A) Increase the surface energy of the metal", "B) Lower the temperature of the metal", "C) Use a thicker coating", "D) Increase the viscosity of the coating"],
+    answer: "A) Increase the surface energy of the metal",
+    explanation: "Increasing the **surface energy** of the metal enhances the **adhesion** between the coating and the metal by allowing better molecular interaction between the two surfaces."
+  },
+  {
+    question: "You are working with a **nano-coating** to protect a **machine part** from wear. Which surface property would help improve the **durability** and **longevity** of the coating?",
+    options: ["A) Low surface energy", "B) High surface energy", "C) Low viscosity", "D) High thermal conductivity"],
+    answer: "B) High surface energy",
+    explanation: "A **high surface energy** promotes better **adhesion** between the coating and the surface, improving its **durability** and **longevity** by reducing the likelihood of coating delamination under wear and friction."
+  },
+  {
+    question: "In an industrial **machining process**, a material with **low friction** is desired to prevent **excessive wear** on the machine parts. Which type of **lubricant** would provide the best solution?",
+    options: ["A) High-viscosity oil", "B) Low-viscosity oil", "C) Graphene-based lubricant", "D) Water-based lubricant"],
+    answer: "C) Graphene-based lubricant",
+    explanation: "Graphene-based lubricants offer **extremely low friction** while providing **high thermal stability**, making them ideal for industrial applications that require **low friction** and **minimal wear**."
+  },
+  {
+    question: "During the design of a **high-performance adhesive** for bonding metal to plastic, which of the following surface properties of the metal should you focus on to ensure a strong bond?",
+    options: ["A) Low surface energy", "B) High surface roughness", "C) High surface energy", "D) High thermal conductivity"],
+    answer: "C) High surface energy",
+    explanation: "For a strong adhesive bond, the metal surface should have **high surface energy**, which promotes better wetting and bonding of the adhesive to the surface."
+  },
+  {
+    question: "In a **tribological study** of a **machine component**, which factor would most directly influence the **friction** between two sliding surfaces?",
+    options: ["A) The hardness of the surfaces", "B) The viscosity of the lubricant", "C) The surface roughness of the materials", "D) The temperature of the environment"],
+    answer: "C) The surface roughness of the materials",
+    explanation: "The **surface roughness** of materials affects the **contact area** between two surfaces, directly influencing the **friction**. Smoother surfaces generally result in lower friction."
+  },
+  {
+    question: "You are designing a **lubrication system** for a **high-speed rotating shaft**. Which material property is most important to prevent **wear** and **friction** at the interface?",
+    options: ["A) High thermal conductivity", "B) High surface energy", "C) High viscosity of the lubricant", "D) Low surface roughness of the shaft"],
+    answer: "C) High viscosity of the lubricant",
+    explanation: "A **high-viscosity lubricant** forms a thicker protective film between the rotating shaft and other parts, reducing **friction** and **wear** at the interface."
+  },
+  {
+    question: "You are working on a project where you need to improve the **adhesion** of a **paint** on a metal surface. What is the most effective way to increase the **adhesion**?",
+    options: ["A) Decrease the surface energy of the metal", "B) Increase the surface energy of the metal", "C) Increase the temperature of the metal", "D) Use a thicker paint layer"],
+    answer: "B) Increase the surface energy of the metal",
+    explanation: "Increasing the **surface energy** of the metal improves the interaction between the metal and the paint, resulting in stronger **adhesion**."
+  },
+  {
+    question: "In a **machining process** involving high-speed metal cutting, which **lubricant** would be most effective in reducing both **friction** and **wear** on the cutting tool?",
+    options: ["A) Water-based lubricant", "B) Synthetic oil lubricant", "C) Solid film lubricant", "D) Graphene-based lubricant"],
+    answer: "B) Synthetic oil lubricant",
+    explanation: "Synthetic oil lubricants are specifically designed to reduce both **friction** and **wear** in high-speed machining processes by forming a thin protective layer between the tool and the workpiece."
+  },
+  {
+    question: "In a **tribological** system, you observe that a lubricant is **breaking down** quickly under high pressure and temperature. Which characteristic of the lubricant should you improve to extend its **performance**?",
+    options: ["A) Increase its viscosity", "B) Increase its surface energy", "C) Improve its thermal stability", "D) Decrease its surface tension"],
+    answer: "C) Improve its thermal stability",
+    explanation: "Improving the **thermal stability** of the lubricant helps it withstand high pressures and temperatures, preventing **breakdown** and ensuring **longer-lasting performance** in **tribological systems**."
+  }
+];
+
+
+
+    let currentQuestion = 0;
+    let score = 0;
+    let lives = 3;
+    let timeLeft = 15;
+    let questionTimer;
+
+    const scoreEl = document.getElementById("score");
+    const livesEl = document.getElementById("lives");
+    const timerEl = document.getElementById("timer");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const explanationEl = document.getElementById("explanation");
+    const startBtn = document.getElementById("startBtn");
+
+    function startGame() {
+      currentQuestion = 0;
+      score = 0;
+      lives = 3;
+      startBtn.textContent = "Restart";
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestion >= questions.length || lives <= 0) {
+        endGame();
+        return;
+      }
+
+      const q = questions[currentQuestion];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.classList.add("option-btn");
+        btn.onclick = () => checkAnswer(opt);
+        optionsEl.appendChild(btn);
+      });
+
+      scoreEl.textContent = `Score: ${score}`;
+      livesEl.textContent = `Lives: ${"❤️".repeat(lives)}`;
+      timeLeft = 15;
+      timerEl.textContent = `Timer: ${timeLeft}`;
+      clearInterval(questionTimer);
+      questionTimer = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      timeLeft--;
+      timerEl.textContent = `Timer: ${timeLeft}`;
+      if (timeLeft <= 0) {
+        clearInterval(questionTimer);
+        feedbackEl.textContent = "⏰ Time's up!";
+        explanationEl.textContent = questions[currentQuestion].explanation;
+        lives--;
+        currentQuestion++;
+        setTimeout(showQuestion, 2500);
+      }
+    }
+
+    function checkAnswer(selected) {
+      clearInterval(questionTimer);
+      const q = questions[currentQuestion];
+      if (selected === q.answer) {
+        feedbackEl.textContent = "✅ Correct!";
+        score++;
+       
+      } else {
+        feedbackEl.textContent = "❌ Incorrect!";
+        lives--;
+        
+      }
+      explanationEl.textContent = q.explanation;
+      currentQuestion++;
+      setTimeout(showQuestion, 2500);
+    }
+
+    function createBubbles(color, count = 12) {
+      const container = document.querySelector(".container");
+
+      for (let i = 0; i < count; i++) {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.style.backgroundColor = color;
+
+        const spreadX = Math.random() * 300 - 150;
+        const spreadY = Math.random() * 200 - 100;
+
+        bubble.style.left = `calc(50% + ${spreadX}px)`;
+        bubble.style.top = `calc(50% + ${spreadY}px)`;
+
+        container.appendChild(bubble);
+
+        setTimeout(() => {
+          bubble.remove();
+        }, 3000);
+      }
+    }
+
+    function endGame() {
+      clearInterval(questionTimer);
+      questionEl.textContent = "🎮 Game Over";
+      optionsEl.innerHTML = "";
+      timerEl.textContent = "";
+      livesEl.textContent = "";
+      scoreEl.textContent = `Final Score: ${score}`;
+      feedbackEl.textContent = "";
+      explanationEl.textContent = "";
+    }
+
+    startBtn.addEventListener("click", startGame);
+  </script>
+</body>
+</html>
